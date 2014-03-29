@@ -1,5 +1,6 @@
 package  
 {
+	import Game;
 	/**
 	 * ...
 	 * @author 
