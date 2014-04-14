@@ -22,19 +22,19 @@ package screens
 		public function Welcome() 
 		{
 			super();
-			//addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
 		private function onAddedToStage(event:Event):void
 		{
 			trace("Welcome screen!");
 			
-			/*bg = new Image(Assets.getTexture("BgWelcome"));
+			/*bg = new Image(Assets.getTexture("BackgroundWelcome"));
 			bg.width = 600;
 			bg.height = 800;
-			this.addChild(bg);
+			this.addChild(bg);*/
 			
-			title = new Image(Assets.getAtlas().getTexture("welcome_title"));
+			/*title = new Image(Assets.getAtlas().getTexture("welcome_title"));
 			title.x = bg.width-200-title.width/2;
 			title.y = 20;
 			this.addChild(title);
