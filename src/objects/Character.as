@@ -30,7 +30,13 @@ package objects
 		private var JUMP:Boolean;
 		private var physics:PhysInjector;
 		private var floor:PhysicsObject;
+		private var balloon:PhysicsObject;
 		private var vMaxX:Number = 5.7;
+		private var lastDate:Date= new Date();
+		private var currentDate:Date = new Date();
+		private var lastMS:Number=0;
+		private var newMS:Number=101;
+
 		
 		public function Character(fisicas:PhysInjector, suelo:PhysicsObject) 
 		{
@@ -60,22 +66,25 @@ package objects
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
 			addEventListener(KeyboardEvent.KEY_UP, Stop);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
-			ContactManager.onContactBegin(charobject.name, floor.name, Rebound);
+			ContactManager.onContactBegin("char", "balloon", Rebound);
 		}
 			
 		private function Movement(event:KeyboardEvent):void
 		{
 			switch (event.keyCode)
 			{
-			  case 39: // derecha
+			  case 39: //derecha
 				RIGHT = true;
 				break;
 			  case 37: //izquierda
 				LEFT = true;
 				break;
 			  case 32: //barra
-				
-				JUMP = true;
+				if (!JUMP)
+				{
+					lastDate = new Date(); //fecha de cuando apreto
+					JUMP = true;
+				}
 				break;
 			}
 		}
@@ -84,11 +93,14 @@ package objects
 		{
 			switch (event.keyCode)
 			{
-			  case 39: // derecha
+			  case 39: //derecha
 				RIGHT = false;
 				break;
 			  case 37: //izquierda
 				LEFT = false;
+				break;
+			  case 32: //barra
+				JUMP = false;
 				break;
 			}
 		}
@@ -105,16 +117,31 @@ package objects
 				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
-			if (JUMP) 
-			{
-				JUMP = false;
-				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter());
-			}
 		}
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			if (ObjectB.name=="balloon") charobject.body.ApplyImpulse(new b2Vec2( 0, -25), charobject.body.GetLocalCenter());
+			charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
+			if (JUMP)
+			{
+				currentDate = new Date(); //fecha de cuando choca
+				lastMS = lastDate.getMilliseconds(); //tiempo de cuando apreto boton JUMP
+				newMS = currentDate.getMilliseconds(); // tiempo de choque
+				
+				if (newMS < lastMS) 
+				{
+					if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -22), charobject.body.GetLocalCenter()); //impulso extra
+				}
+				else
+				{
+					if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -22), charobject.body.GetLocalCenter()); //impulso extra
+				}
+				JUMP = false;
+			}
+			else
+			{
+				charobject.body.ApplyImpulse(new b2Vec2( 0, -15), charobject.body.GetLocalCenter()); //impulso normal
+			}			
 		}
 	}
 }

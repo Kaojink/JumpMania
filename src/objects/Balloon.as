@@ -39,6 +39,7 @@ package objects
 			NormalBallonObject.body.SetFixedRotation(true);
 			NormalBallonObject.x = 100;
 			NormalBallonObject.y = 300;
+			NormalBallonObject.name = "balloon";
 			
 			
 			//CreateNormalBallon();

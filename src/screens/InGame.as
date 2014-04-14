@@ -25,8 +25,6 @@ package screens
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	//
-	//import starling.events.EventDispatcher;
-	//
 	//
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.data.PhysicsObject;
@@ -66,12 +64,10 @@ package screens
 			
 			trace("InGame Screen");
 			
-			
 			bg = new Image(Assets.getTexture("BackgroundInGame"));
 			bg.width = 700;
 			bg.height = 800;
 			this.addChild(bg);
-			
 			
 			floor = new Image(Assets.getTexture("Ground"));
 			floor.width = 700;
@@ -82,21 +78,14 @@ package screens
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
 			floorObject.name = "floor";
 			
+			balloon1 = new Balloon(physics);
+			addChild(balloon1);
+			
 			char = new Character(physics, floorObject);
 			addChild(char);
 			
-			//charobject = physics.injectPhysics(char, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: -0.8,linearDamping:1 } ));
-			//charobject.physicsProperties.density = 1;
-			//charobject.body.SetFixedRotation(true);
-			//charobject.name = "char";
-			
-			balloon1 = new Balloon(physics);
-			balloon1.name = "balloon";
-			addChild(balloon1);
-			
 			//injectPhysics();
 			addEventListener(Event.ENTER_FRAME, update);
-			//ContactManager.onContactBegin(charobject.name, floorObject.name, Rebound);
 		}
 			
 		public function initialize():void
@@ -106,7 +95,6 @@ package screens
 		
 		private function update():void
 		{
-			
 		//	currentDate = new Date;
 		//	balloon1Object.y = 300 + (Math.cos(currentDate.getTime() * 0.002) * 15);
 			physics.update();
