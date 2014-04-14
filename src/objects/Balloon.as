@@ -40,6 +40,7 @@ package objects
 			NormalBallonObject.x = 100;
 			NormalBallonObject.y = 300;
 			
+			
 			//CreateNormalBallon();
 		}
 		

@@ -1,6 +1,7 @@
 package objects 
 {
 
+	import Box2D.Dynamics.Contacts.b2Contact;
 	import starling.core.Starling;
 	import starling.display.MovieClip;
 	import starling.display.Sprite;
@@ -54,12 +55,12 @@ package objects
 			charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: -0.8,linearDamping:1 } ));
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
-			
-
+			charobject.name = "char";
 			
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
 			addEventListener(KeyboardEvent.KEY_UP, Stop);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
+			ContactManager.onContactBegin(charobject.name, floor.name, Rebound);
 		}
 			
 		private function Movement(event:KeyboardEvent):void
@@ -96,12 +97,12 @@ package objects
 		{
 			if (LEFT)
 			{
-				if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());//charobject.x -= 10;
+				if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(-vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
 			if (RIGHT) 
 			{
-				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());//charobject.x += 10;
+				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
 			if (JUMP) 
@@ -109,6 +110,11 @@ package objects
 				JUMP = false;
 				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter());
 			}
+		}
+		
+		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		{
+			if (ObjectB.name=="balloon") charobject.body.ApplyImpulse(new b2Vec2( 0, -25), charobject.body.GetLocalCenter());
 		}
 	}
 }

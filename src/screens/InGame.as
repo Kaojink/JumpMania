@@ -79,15 +79,24 @@ package screens
             floor.x = 0;
             floor.y = stage.stageHeight-100;
             addChild( floor );
+			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
+			floorObject.name = "floor";
 			
 			char = new Character(physics, floorObject);
 			addChild(char);
 			
+			//charobject = physics.injectPhysics(char, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: -0.8,linearDamping:1 } ));
+			//charobject.physicsProperties.density = 1;
+			//charobject.body.SetFixedRotation(true);
+			//charobject.name = "char";
+			
 			balloon1 = new Balloon(physics);
+			balloon1.name = "balloon";
 			addChild(balloon1);
 			
-			injectPhysics();
+			//injectPhysics();
 			addEventListener(Event.ENTER_FRAME, update);
+			//ContactManager.onContactBegin(charobject.name, floorObject.name, Rebound);
 		}
 			
 		public function initialize():void
@@ -97,21 +106,17 @@ package screens
 		
 		private function update():void
 		{
-			ContactManager.onContactBegin(char.name, balloon1.name, Rebound);
+			
 		//	currentDate = new Date;
 		//	balloon1Object.y = 300 + (Math.cos(currentDate.getTime() * 0.002) * 15);
 			physics.update();
 		}
 		
-		private function injectPhysics():void
+		/*private function injectPhysics():void
 		{
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
-		}
-		
-		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
-		{
-			trace("hola");
-		}
+			floorObject.name = "floor";
+		}*/
 	}
 
 }
