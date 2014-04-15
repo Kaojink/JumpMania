@@ -1,21 +1,23 @@
 package objects 
 {
-
-	import Box2D.Dynamics.Contacts.b2Contact;
 	import starling.core.Starling;
 	import starling.display.MovieClip;
 	import starling.display.Sprite;
 	import starling.events.EnterFrameEvent;
 	import starling.events.Event;
 	import starling.events.KeyboardEvent;
-	
+	//
 	import Box2D.Dynamics.b2World;
+	import Box2D.Dynamics.Contacts.b2Contact;
 	import Box2D.Common.Math.b2Vec2;
-	
+	//
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager
+	
+	
+	
 	/**
 	 * ...
 	 * @author 
@@ -51,10 +53,11 @@ package objects
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			trace("Carga Personaje");
 			
-			character= new MovieClip(Assets.getAtlas().getTextures("Idleanimation128_"), 7);
+			character = new MovieClip(Assets.getAtlas().getTextures("Idleanimation128_"), 7);
 			character.width = dimension/2;
 			character.height = dimension;
 			character.x = (Starling.current.nativeStage.stageWidth - character.width) / 2;
+			character.y = (Starling.current.nativeStage.stageHeight - character.height - 100);
 			Starling.juggler.add(character);
 			this.addChild(character);
 			
