@@ -81,7 +81,7 @@ package screens
 			balloon1 = new Balloon(physics);
 			addChild(balloon1);
 			
-			char = new Character(physics, floorObject);
+			char = new Character(physics);
 			addChild(char);
 			
 			//injectPhysics();

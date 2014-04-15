@@ -37,14 +37,14 @@ package objects
 		private var lastDate:Date= new Date();
 		private var currentDate:Date = new Date();
 		private var lastMS:Number=0;
-		private var newMS:Number=101;
+		private var newMS:Number = 101;
+		private var OnFloor:Boolean = true;
 
 		
-		public function Character(fisicas:PhysInjector, suelo:PhysicsObject) 
+		public function Character(fisicas:PhysInjector) 
 		{
 			super();
 			physics = fisicas;
-			floor =  suelo;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -64,6 +64,8 @@ package objects
 			charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: -0.8,linearDamping:1 } ));
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
+			charobject.physicsProperties.isDraggable = false;
+
 			charobject.name = "char";
 			
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
@@ -120,6 +122,11 @@ package objects
 				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
+			if (OnFloor && JUMP)
+			{
+				OnFloor = false;
+				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
+			}
 		}
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
@@ -133,11 +140,11 @@ package objects
 				
 				if (newMS < lastMS) 
 				{
-					if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -22), charobject.body.GetLocalCenter()); //impulso extra
+					if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
 				}
 				else
 				{
-					if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -22), charobject.body.GetLocalCenter()); //impulso extra
+					if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
 				}
 				JUMP = false;
 			}

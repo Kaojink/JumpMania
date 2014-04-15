@@ -1,6 +1,7 @@
 package objects 
 {
 	import Box2D.Common.Math.b2Vec2;
+	import Box2D.Common.Math.b2Vec3;
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -45,39 +46,46 @@ package objects
 			CreateNormalBallon();
 		}
 		
-		private function CreateNormalBallon()
+		private function CreateNormalBallon():void
 		{
 			NormalBallon = new Image(Assets.getTexture("Globo"));
 			NormalBallon.width = dimension;
 			NormalBallon.height = dimension;
 			this.addChild(NormalBallon);
 			
-			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:9.8 } ));
+			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:0 } ));
 			NormalBallonObject.body.SetFixedRotation(true);
 			NormalBallonObject.x = 100;
 			NormalBallonObject.y = 300;
 			NormalBallonObject.name = "balloon";
 			//NormalBallonObject.physicsProperties.isSensor = true;
+			NormalBallonObject.physicsProperties.isDraggable = false;
 			addEventListener(EnterFrameEvent.ENTER_FRAME, AscendState);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-			
+			 
 		}
 		
-		private function AscendState(e:EnterFrameEvent):void 
+		private function AscendState(e:EnterFrameEvent):void
 		{
-			if (NormalBallonObject.body.GetLinearVelocity().y > vMax || NormalBallonObject.body.GetLinearVelocity().y < -vMax) ASCEND = !ASCEND;
+			if (NormalBallonObject.body.GetLinearVelocity().y > vMax || NormalBallonObject.body.GetLinearVelocity().y < -vMax) 
+			{
+				NormalBallonObject.body.SetLinearVelocity(new b2Vec2(0, 0));
+				ASCEND = !ASCEND;
+			}
 		}
 		
 		private function FlyState(e:EnterFrameEvent):void 
 		{
 
-			if (!ASCEND)
+			if (ASCEND)
 			{
-			
+				trace("1");
+				NormalBallonObject.body.ApplyForce(new b2Vec2(0, -9.8),NormalBallonObject.body.GetLocalCenter() );
 			}
 			else
 			{
-				
+				trace("2");
+				NormalBallonObject.body.ApplyForce(new b2Vec2(0, 9.8),NormalBallonObject.body.GetLocalCenter() );
 			}
 		}
 		
