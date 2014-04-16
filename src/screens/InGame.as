@@ -47,6 +47,10 @@ package screens
 		
 		private var balloon1:Balloon;
 		
+		private var generate:Boolean=true;
+		private var time:Date = new Date;
+		private var time2:Date = new Date;
+		
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
 
 		
@@ -70,9 +74,9 @@ package screens
 			this.addChild(bg);
 			
 			floor = new Image(Assets.getTexture("Ground"));
-			floor.width = 700;
+			floor.width = 900;
 			floor.height = 100;
-            floor.x = 0;
+            floor.x = -100;
             floor.y = stage.stageHeight-100;
             addChild( floor );
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
@@ -86,6 +90,7 @@ package screens
 			
 			//injectPhysics();
 			addEventListener(Event.ENTER_FRAME, update);
+			addEventListener(Event.ENTER_FRAME, RandomGenerate);
 		}
 			
 		public function initialize():void
@@ -105,6 +110,30 @@ package screens
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
 			floorObject.name = "floor";
 		}*/
+		
+		private function RandomGenerate(e:EnterFrameEvent):void
+		{
+			if (generate)
+			{
+				trace("1");
+				generate = false;
+				time = new Date();
+				time2 = new Date();
+				
+				var globo:objects.Balloon = new Balloon(physics);
+				this.addChild(globo);
+			}
+			else 
+			{
+				trace("2");
+				time2 = new Date();
+				if (time2.getSeconds() - time.getSeconds() >= 2)
+				{
+					trace("3");
+					generate = true;
+				}
+			}
+		}
 	}
 
 }

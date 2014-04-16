@@ -18,6 +18,7 @@ package objects
 	
 	
 	
+	
 	/**
 	 * ...
 	 * @author 
@@ -39,7 +40,6 @@ package objects
 		private var lastMS:Number=0;
 		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
-
 		
 		public function Character(fisicas:PhysInjector) 
 		{
@@ -61,21 +61,22 @@ package objects
 			Starling.juggler.add(character);
 			this.addChild(character);
 			
-			charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: -0.8,linearDamping:1 } ));
+			charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
-			charobject.physicsProperties.isDraggable = false;
-
+			//charobject.physicsProperties.isDraggable = false;
 			charobject.name = "char";
 			
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
 			addEventListener(KeyboardEvent.KEY_UP, Stop);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
 			ContactManager.onContactBegin("char", "balloon", Rebound);
+
 		}
 			
 		private function Movement(event:KeyboardEvent):void
 		{
+			
 			switch (event.keyCode)
 			{
 			  case 39: //derecha
@@ -112,6 +113,9 @@ package objects
 		
 		private function updateMovement():void
 		{
+			if (charobject.x < 0) charobject.x = Starling.current.nativeStage.stageWidth;
+			else if (charobject.x > Starling.current.nativeStage.stageWidth) charobject.x=0;
+
 			if (LEFT)
 			{
 				if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());
@@ -124,34 +128,42 @@ package objects
 			}
 			if (OnFloor && JUMP)
 			{
-				OnFloor = false;
+				//OnFloor = false;
 				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
 			}
 		}
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
-			if (JUMP)
+			trace("1");
+			trace(ObjectA.y);
+			trace(ObjectB.y);
+			if (ObjectA.y + 64 <= ObjectB.y + 16)
 			{
-				currentDate = new Date(); //fecha de cuando choca
-				lastMS = lastDate.getMilliseconds(); //tiempo de cuando apreto boton JUMP
-				newMS = currentDate.getMilliseconds(); // tiempo de choque
-				
-				if (newMS < lastMS) 
+				trace("entra");
+				charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
+				if (JUMP)
 				{
-					if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
+					currentDate = new Date(); //fecha de cuando choca
+					lastMS = lastDate.getMilliseconds(); //tiempo de cuando apreto boton JUMP
+					newMS = currentDate.getMilliseconds(); // tiempo de choque
+					
+					if (newMS < lastMS) 
+					{
+						if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
+					}
+					else
+					{
+						if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
+					}
+					JUMP = false;
 				}
 				else
 				{
-					if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
-				}
-				JUMP = false;
+					charobject.body.ApplyImpulse(new b2Vec2( 0, -15), charobject.body.GetLocalCenter()); //impulso normal
+				}		
 			}
-			else
-			{
-				charobject.body.ApplyImpulse(new b2Vec2( 0, -15), charobject.body.GetLocalCenter()); //impulso normal
-			}			
+
 		}
 	}
 }
