@@ -4,7 +4,7 @@ package  events
 	
 	/**
 	 * ...
-	 * @author ...
+	 * @author 
 	 */
 	public class NavigationEvent extends Event 
 	{

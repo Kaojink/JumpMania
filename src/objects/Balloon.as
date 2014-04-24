@@ -25,10 +25,11 @@ package objects
 		private var NormalBallonObject:PhysicsObject;
 		private var dimension:Number = 64;
 		private var vMax:Number = 0.6;
-		private var PosX:Number;
+		private var RIGHT:Boolean = false;
 		private var PosY:Number;
 		private var ASCEND:Boolean = false;
 		private var physics:PhysInjector;
+		private var Xdirection:Number;
 
 		
 		public function Balloon(fisicas:PhysInjector) 
@@ -41,56 +42,55 @@ package objects
 		private function onAddedToStage(e:Event):void 
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			trace("Balloon creado");
+			//trace("Balloon creado");
 			CreateNormalBallon();			
 		}
 		
 		private function CreateNormalBallon():void
 		{
-			trace("hola");
+			//trace("hola");
 			NormalBallon = new Image(Assets.getTexture("Globo"));
+			NormalBallon.y = -100;
 			NormalBallon.width = dimension;
 			NormalBallon.height = dimension;
 			this.addChild(NormalBallon);
 			
-			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true } )); //, friction:0, linearDamping:0 } ));
+			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
 			NormalBallonObject.body.SetFixedRotation(true);
-			NormalBallonObject.x = 600 + Math.random() * 100;
+			//NormalBallonObject.x =  Math.random() * 700;
 			//NormalBallonObject.y = 600 + Math.random() * 100;
-			//PosX = 600 + Math.random() * 100;
-			PosY = 600 + Math.random() * 100;
-			trace(NormalBallonObject.x);
+			if (Math.random() >= 0.5) RIGHT = true;
+			//PosY = 600 + Math.random() * 100;
+			
 			NormalBallonObject.name = "balloon";
 			NormalBallonObject.physicsProperties.isSensor = true;
 			NormalBallonObject.physicsProperties.isDraggable = false;
-			//addEventListener(EnterFrameEvent.ENTER_FRAME, AscendState);
+			
+			if (RIGHT)
+			{
+				Xdirection = -3;
+				NormalBallonObject.x =  700 + Math.random() * 100;
+				PosY = Starling.current.nativeStage.stageHeight - 100 - Math.random() * 600;
+			}
+			else 
+			{
+				Xdirection = 3;
+				NormalBallonObject.x = -NormalBallon.width - Math.random() * 100;
+				PosY = Starling.current.nativeStage.stageHeight - 100 - Math.random() * 600;
+			}
+			
 			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
 			
+
+			
 		}
-		
-		/*private function AscendState(e:EnterFrameEvent):void
-		{
-			if (NormalBallonObject.body.GetLinearVelocity().y > vMax || NormalBallonObject.body.GetLinearVelocity().y < -vMax) 
-			{
-				NormalBallonObject.body.SetLinearVelocity(new b2Vec2(0, 0));
-				ASCEND = !ASCEND;
-			}
-		}*/
-		
+			
 		private function FlyState(e:EnterFrameEvent):void 
 		{
 			var currentDate:Date = new Date();
-			NormalBallonObject.y = PosY + (Math.cos(currentDate.getTime() * 0.002) * 15);
-			/*if (ASCEND)
-			{
-				//trace("1");
-				NormalBallonObject.body.ApplyForce(new b2Vec2(0, -9.8),NormalBallonObject.body.GetLocalCenter() );
-			}
-			else
-			{
-				//trace("2");
-				NormalBallonObject.body.ApplyForce(new b2Vec2(0, 9.8),NormalBallonObject.body.GetLocalCenter() );
-			}*/
+			NormalBallonObject.y = Starling.current.root.y + PosY + (Math.cos(currentDate.getTime() * 0.002) * 15);
+			NormalBallonObject.x += Xdirection;
+			
 		}
 		
 		

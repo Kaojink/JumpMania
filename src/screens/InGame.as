@@ -7,7 +7,9 @@ package screens
 	
 	import Box2D.Dynamics.Contacts.b2NullContact;
 	import events.NavigationEvent;
+	import flash.geom.Rectangle;
 	import objects.Character;
+	import objects.BgLayer;
 	import objects.Balloon;
 	import starling.events.EnterFrameEvent;
 	//
@@ -31,13 +33,16 @@ package screens
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	import com.reyco1.physinjector.contact.ContactManager;
 	//
+	import flash.media.Camera;
 	
 	 public class InGame extends Sprite
 	{
 		private var physics:PhysInjector;
 		
-		private var bg:Image;
-		private var currentDate:Date;
+		private var BG:BgLayer;
+		
+	//	private var bg:Image;
+	//	private var currentDate:Date;
 		
 		private var char:Character;
 		private var charobject:PhysicsObject;
@@ -52,7 +57,7 @@ package screens
 		private var time2:Date = new Date;
 		
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
-
+		private var camera:Camera = new Camera();
 		
 		public function InGame() 
 		{
@@ -68,10 +73,14 @@ package screens
 			
 			trace("InGame Screen");
 			
-			bg = new Image(Assets.getTexture("BackgroundInGame"));
+			
+			BG = new BgLayer(); //Declaramos el fondo
+			this.addChild(BG);
+
+			/*bg = new Image(Assets.getTexture("BackgroundInGame"));
 			bg.width = 700;
 			bg.height = 800;
-			this.addChild(bg);
+			this.addChild(bg);*/
 			
 			floor = new Image(Assets.getTexture("Ground"));
 			floor.width = 900;
@@ -91,6 +100,7 @@ package screens
 			//injectPhysics();
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
+			addEventListener(Event.ENTER_FRAME, followChar);
 		}
 			
 		public function initialize():void
@@ -115,7 +125,7 @@ package screens
 		{
 			if (generate)
 			{
-				trace("1");
+				//trace("1");
 				generate = false;
 				time = new Date();
 				time2 = new Date();
@@ -125,14 +135,26 @@ package screens
 			}
 			else 
 			{
-				trace("2");
+				//trace(time);
+				//trace(time2);
 				time2 = new Date();
-				if (time2.getSeconds() - time.getSeconds() >= 2)
+				if (time2.getSeconds() < time.getSeconds())
+				{
+					if ( 60 + time2.getSeconds() - time.getSeconds() >= 1) generate = true;
+				}
+				else if (time2.getSeconds() - time.getSeconds() >= 1)
 				{
 					trace("3");
 					generate = true;
 				}
 			}
+		}
+		
+		private function followChar(e:EnterFrameEvent):void
+		{
+			
+			//Starling.current.stage.root.y = char.y - 800 -164;
+			//var scrollRect:Rectangle =  new Rectangle(char.x - Starling.current.nativeStage.stageWidth / 2, char.y - Starling.current.nativeStage.stageHeight / 2, Starling.current.nativeStage.stageWidth, Starling.current.nativeStage.stageHeight); 
 		}
 	}
 
