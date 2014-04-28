@@ -57,9 +57,7 @@ package objects
 			character_animation.addAnimation("Idleanimation128_", 5,true);
 			character_animation.addAnimation("JumpAnimation128_", 7,false);
 			character_animation.play("Idleanimation128_");
-			
 			addChild(character_animation);
-			
 			
 		/*	character = new MovieClip(Assets.getAtlas().getTextures("Idleanimation128_"), 7);
 			character.width = dimension/2;
@@ -72,7 +70,7 @@ package objects
 			//charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			
 			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
-
+			charobject.y = 635.4749999999999;
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
 			//charobject.physicsProperties.isDraggable = false;
@@ -126,7 +124,8 @@ package objects
 		
 		private function updateMovement():void
 		{
-			//trace(charobject.x);
+			character_animation.y = charobject.y;
+			
 			if (charobject.x < 0) charobject.x = Starling.current.nativeStage.stageWidth;
 			else if (charobject.x > Starling.current.nativeStage.stageWidth) charobject.x=0;
 
@@ -151,14 +150,12 @@ package objects
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			//trace("1");
-			//trace(ObjectA.y);
-			//trace(ObjectB.y);
+			
 			if (ObjectA.y + 64 <= ObjectB.y + 16)
 			{
 				//trace("entra");
-				charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
-				if (JUMP)
+				ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
+				if (!OnFloor && JUMP)
 				{
 					currentDate = new Date(); //fecha de cuando choca
 					lastMS = lastDate.getMilliseconds(); //tiempo de cuando apreto boton JUMP
@@ -166,26 +163,42 @@ package objects
 					
 					if (newMS < lastMS) 
 					{
-						if (1000 + newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
+						if (1000 + newMS - lastMS <= 100) ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
 					}
 					else
 					{
-						if (newMS - lastMS <= 100) charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso extra
+						if (newMS - lastMS <= 100) ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
 					}
 					JUMP = false;
 				}
 				else
 				{
-					charobject.body.ApplyImpulse(new b2Vec2( 0, -15), charobject.body.GetLocalCenter()); //impulso normal
-				}		
+					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
+				}
+				
 			}
-
+			else
+			{
+				// aqui intentaba hacer una colisión continua utilizando algunas funciones del contact, pero no he sabido como implementarlas
+				
+				//trace(contact.IsTouching());
+				//if (contact.IsContinuous()) ContactManager.onContactBegin("char", "balloon", Rebound);
+			}
 		}
 		
 		private function JumpFromFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
 			OnFloor = true;
+		}
 		
+		public function GetPosY():Number
+		{
+			return charobject.y;
+		}
+		
+		public function GetInitPosY():Number
+		{
+			return 635.4749999999999;
 		}
 	}
 }

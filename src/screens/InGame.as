@@ -51,13 +51,15 @@ package screens
 		private var floorObject:PhysicsObject;
 		
 		private var balloon1:Balloon;
+		private var balloon2:Balloon;
 		
 		private var generate:Boolean=true;
 		private var time:Date = new Date;
 		private var time2:Date = new Date;
 		
-		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
 		private var camera:Camera = new Camera();
+		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
+		private var offset:Number;
 		
 		public function InGame() 
 		{
@@ -86,17 +88,25 @@ package screens
 			floor.width = 900;
 			floor.height = 100;
             floor.x = -100;
-            floor.y = stage.stageHeight-100;
+            floor.y = 700;
             addChild( floor );
-			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
+			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.8, restitution:0 } ));
 			floorObject.name = "floor";
+			//floorObject.y;
 			
 			balloon1 = new Balloon(physics);
 			addChild(balloon1);
 			
+			balloon2 = new Balloon(physics);
+			addChild(balloon2);
+			
+
 			char = new Character(physics);
 			addChild(char);
 			
+			char.y = char.GetPosY();
+			offset = char.y;
+			this.y = char.y;
 			//injectPhysics();
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
@@ -130,7 +140,7 @@ package screens
 				time = new Date();
 				time2 = new Date();
 				
-				var globo:objects.Balloon = new Balloon(physics);
+				var globo:Balloon = new Balloon(physics);
 				this.addChild(globo);
 			}
 			else 
@@ -152,9 +162,9 @@ package screens
 		
 		private function followChar(e:EnterFrameEvent):void
 		{
-			
-			//Starling.current.stage.root.y = char.y - 800 -164;
-			//var scrollRect:Rectangle =  new Rectangle(char.x - Starling.current.nativeStage.stageWidth / 2, char.y - Starling.current.nativeStage.stageHeight / 2, Starling.current.nativeStage.stageWidth, Starling.current.nativeStage.stageHeight); 
+			char.y = char.GetPosY();
+			this.y = -char.y+char.GetInitPosY();
+			physics.globalOffsetY = -char.y+ char.GetInitPosY();
 		}
 	}
 

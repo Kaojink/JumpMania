@@ -27,12 +27,8 @@ package objects
 			background_ground.width = 700;
 			background_ground.height = 800;
 			this.addChild(background_ground);
-						
-			
 		}
-		
-		
-		
+	
 	}
 
 }

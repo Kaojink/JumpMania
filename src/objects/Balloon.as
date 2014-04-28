@@ -11,10 +11,6 @@ package objects
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.data.PhysicsProperties;
-	
-	
-	
-	
 	/**
 	 * ...
 	 * @author 
@@ -30,6 +26,8 @@ package objects
 		private var ASCEND:Boolean = false;
 		private var physics:PhysInjector;
 		private var Xdirection:Number;
+		private var properties:PhysicsProperties = new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } );
+		//public var BalloonLives:Number = 3;
 
 		
 		public function Balloon(fisicas:PhysInjector) 
@@ -50,7 +48,7 @@ package objects
 		{
 			//trace("hola");
 			NormalBallon = new Image(Assets.getTexture("Globo"));
-			NormalBallon.y = -100;
+			NormalBallon.y = +900;
 			NormalBallon.width = dimension;
 			NormalBallon.height = dimension;
 			this.addChild(NormalBallon);
@@ -64,32 +62,37 @@ package objects
 			
 			NormalBallonObject.name = "balloon";
 			NormalBallonObject.physicsProperties.isSensor = true;
-			NormalBallonObject.physicsProperties.isDraggable = false;
+			//NormalBallonObject.physicsProperties.isDraggable = false;
 			
 			if (RIGHT)
 			{
-				Xdirection = -3;
-				NormalBallonObject.x =  700 + Math.random() * 100;
-				PosY = Starling.current.nativeStage.stageHeight - 100 - Math.random() * 600;
-			}
+				Xdirection = -1 - Math.random() * 2;;
+				NormalBallonObject.x =  700 + Math.random() * 100;			}
 			else 
 			{
-				Xdirection = 3;
-				NormalBallonObject.x = -NormalBallon.width - Math.random() * 100;
-				PosY = Starling.current.nativeStage.stageHeight - 100 - Math.random() * 600;
-			}
-			
-			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-			
+				Xdirection = 1 + Math.random() * 2;
+				NormalBallonObject.x = - Math.random() * 100;
+			}	
+			//trace(PosY);
+			PosY = parent.y - 100 + Math.random() * 600;
+			//trace(PosY);
 
-			
+		//	PosY = Starling.current.nativeStage.stageHeight - 200 - Math.random() * 700;
+			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
 		}
 			
-		private function FlyState(e:EnterFrameEvent):void 
+		private function FlyState(e:EnterFrameEvent):void
 		{
 			var currentDate:Date = new Date();
 			NormalBallonObject.y = Starling.current.root.y + PosY + (Math.cos(currentDate.getTime() * 0.002) * 15);
 			NormalBallonObject.x += Xdirection;
+			
+			if (NormalBallonObject.x > 800 || NormalBallonObject.x < -100) 
+			{
+				//trace("borrado");
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
+				this.parent.removeChild(this);
+			}
 			
 		}
 		
