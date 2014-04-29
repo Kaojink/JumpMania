@@ -1,7 +1,6 @@
 package  events
 {
 	import starling.events.Event;
-	
 	/**
 	 * ...
 	 * @author 

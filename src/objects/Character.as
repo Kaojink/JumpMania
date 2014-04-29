@@ -15,7 +15,7 @@ package objects
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	import com.reyco1.physinjector.PhysInjector;
-	import com.reyco1.physinjector.contact.ContactManager
+	import com.reyco1.physinjector.contact.ContactManager;
 	
 	
 	
@@ -37,8 +37,8 @@ package objects
 		private var vMaxX:Number = 5.7;
 		private var lastDate:Date= new Date();
 		private var currentDate:Date = new Date();
-		private var lastMS:Number=0;
-		private var newMS:Number = 101;
+		//private var lastMS:Number=0;
+		//private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
 		
 		public function Character(fisicas:PhysInjector) 
@@ -79,10 +79,16 @@ package objects
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
 			addEventListener(KeyboardEvent.KEY_UP, Stop);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
-			ContactManager.onContactBegin("char", "balloon", Rebound);
+			//ContactManager.onContactBegin("char", "balloon", Rebound);
 			ContactManager.onContactBegin("char", "floor", JumpFromFloor);
-
-
+			//ContactManager.onContactEnd("char", "floor", 
+	
+			//
+			
+			//usar el bounds, intersects (cuerpo.bounds) 
+			
+			//
+			
 		}
 			
 		private function Movement(event:KeyboardEvent):void
@@ -148,7 +154,7 @@ package objects
 			}
 		}
 		
-		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+	/*	private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
 			
 			if (ObjectA.y + 64 <= ObjectB.y + 16)
@@ -184,7 +190,7 @@ package objects
 				//trace(contact.IsTouching());
 				//if (contact.IsContinuous()) ContactManager.onContactBegin("char", "balloon", Rebound);
 			}
-		}
+		}*/
 		
 		private function JumpFromFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
@@ -199,6 +205,26 @@ package objects
 		public function GetInitPosY():Number
 		{
 			return 635.4749999999999;
+		}
+		
+		public function GetJumpValue():Boolean
+		{
+			return JUMP;
+		}
+		
+		public function GetOnFloorValue():Boolean
+		{
+			return OnFloor;
+		}
+		
+		public function GetLastDate():Date
+		{
+			return lastDate;
+		}
+		
+		public function Impulsed():void
+		{
+			JUMP = false;
 		}
 	}
 }

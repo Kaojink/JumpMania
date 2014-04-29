@@ -15,6 +15,9 @@ package
 		[Embed(source = "../assets/fondos/background-ground01.png")]
 		public static const BG_ground01:Class;
 		
+		[Embed(source = "../assets/fondos/background-ground02.png")]
+		public static const BG_ground02:Class;
+		
 		[Embed(source = "../assets/fondos/ground-900x100.png")]
 		public static const Ground:Class;
 		

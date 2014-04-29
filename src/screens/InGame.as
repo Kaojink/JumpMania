@@ -33,6 +33,9 @@ package screens
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	import com.reyco1.physinjector.contact.ContactManager;
 	//
+	
+	import events.Collision;
+	
 	import flash.media.Camera;
 	
 	 public class InGame extends Sprite
@@ -61,6 +64,8 @@ package screens
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
 		private var offset:Number;
 		
+		private var index:Number = 0;
+		
 		public function InGame() 
 		{
 			super();
@@ -78,11 +83,6 @@ package screens
 			
 			BG = new BgLayer(); //Declaramos el fondo
 			this.addChild(BG);
-
-			/*bg = new Image(Assets.getTexture("BackgroundInGame"));
-			bg.width = 700;
-			bg.height = 800;
-			this.addChild(bg);*/
 			
 			floor = new Image(Assets.getTexture("Ground"));
 			floor.width = 900;
@@ -94,11 +94,11 @@ package screens
 			floorObject.name = "floor";
 			//floorObject.y;
 			
-			balloon1 = new Balloon(physics);
-			addChild(balloon1);
+			//balloon1 = new Balloon(physics);
+			//addChild(balloon1);
 			
-			balloon2 = new Balloon(physics);
-			addChild(balloon2);
+			//balloon2 = new Balloon(physics);
+			//addChild(balloon2);
 			
 
 			char = new Character(physics);
@@ -119,7 +119,7 @@ package screens
 		}
 		
 		private function update():void
-		{
+		{ 
 		//	currentDate = new Date;
 		//	balloon1Object.y = 300 + (Math.cos(currentDate.getTime() * 0.002) * 15);
 			physics.update();
@@ -140,8 +140,11 @@ package screens
 				time = new Date();
 				time2 = new Date();
 				
-				var globo:Balloon = new Balloon(physics);
+				var globo:Balloon = new Balloon(physics, index);
+				trace(index);
 				this.addChild(globo);
+				var colision:Collision = new Collision(index, char);
+				index++;
 			}
 			else 
 			{
@@ -154,7 +157,7 @@ package screens
 				}
 				else if (time2.getSeconds() - time.getSeconds() >= 1)
 				{
-					trace("3");
+					//trace("3");
 					generate = true;
 				}
 			}

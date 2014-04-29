@@ -1,13 +1,15 @@
 package objects 
 {
+	import starling.display.Sprite;
+	
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class Background 
+	public class Background extends Sprite
 	{
 		
-		public function Background() 
+		public function Background(character:Character) 
 		{
 			
 		}

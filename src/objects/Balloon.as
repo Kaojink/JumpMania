@@ -28,12 +28,15 @@ package objects
 		private var Xdirection:Number;
 		private var properties:PhysicsProperties = new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } );
 		//public var BalloonLives:Number = 3;
+		
+		private var ind:Number;
 
 		
-		public function Balloon(fisicas:PhysInjector) 
+		public function Balloon(fisicas:PhysInjector, index:Number) 
 		{
 			super();
 			physics = fisicas;
+			ind = index;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -60,7 +63,7 @@ package objects
 			if (Math.random() >= 0.5) RIGHT = true;
 			//PosY = 600 + Math.random() * 100;
 			
-			NormalBallonObject.name = "balloon";
+			NormalBallonObject.name = "balloon" + ind;
 			NormalBallonObject.physicsProperties.isSensor = true;
 			//NormalBallonObject.physicsProperties.isDraggable = false;
 			
@@ -95,8 +98,6 @@ package objects
 			}
 			
 		}
-		
-		
-		
+				
 	}
 }
