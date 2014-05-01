@@ -37,8 +37,8 @@ package objects
 		private var vMaxX:Number = 5.7;
 		private var lastDate:Date= new Date();
 		private var currentDate:Date = new Date();
-		//private var lastMS:Number=0;
-		//private var newMS:Number = 101;
+		private var lastMS:Number=0;
+		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
 		
 		public function Character(fisicas:PhysInjector) 
@@ -70,7 +70,7 @@ package objects
 			//charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			
 			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
-			charobject.y = 635.4749999999999;
+			charobject.y = 585.4749999999999;
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
 			//charobject.physicsProperties.isDraggable = false;
@@ -79,15 +79,8 @@ package objects
 			addEventListener(KeyboardEvent.KEY_DOWN, Movement);
 			addEventListener(KeyboardEvent.KEY_UP, Stop);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
-			//ContactManager.onContactBegin("char", "balloon", Rebound);
-			ContactManager.onContactBegin("char", "floor", JumpFromFloor);
-			//ContactManager.onContactEnd("char", "floor", 
-	
-			//
-			
-			//usar el bounds, intersects (cuerpo.bounds) 
-			
-			//
+			ContactManager.onContactBegin("char", "floor", OnTheFloor);
+			ContactManager.onContactEnd("char", "floor", OverTheFloor);
 			
 		}
 			
@@ -154,47 +147,19 @@ package objects
 			}
 		}
 		
-	/*	private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		public function updateChild():void
 		{
-			
-			if (ObjectA.y + 64 <= ObjectB.y + 16)
-			{
-				//trace("entra");
-				ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
-				if (!OnFloor && JUMP)
-				{
-					currentDate = new Date(); //fecha de cuando choca
-					lastMS = lastDate.getMilliseconds(); //tiempo de cuando apreto boton JUMP
-					newMS = currentDate.getMilliseconds(); // tiempo de choque
-					
-					if (newMS < lastMS) 
-					{
-						if (1000 + newMS - lastMS <= 100) ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
-					}
-					else
-					{
-						if (newMS - lastMS <= 100) ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
-					}
-					JUMP = false;
-				}
-				else
-				{
-					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
-				}
-				
-			}
-			else
-			{
-				// aqui intentaba hacer una colisión continua utilizando algunas funciones del contact, pero no he sabido como implementarlas
-				
-				//trace(contact.IsTouching());
-				//if (contact.IsContinuous()) ContactManager.onContactBegin("char", "balloon", Rebound);
-			}
-		}*/
+			//aqui se pondra al personaje delante de todos los objetos
+		}
 		
-		private function JumpFromFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		private function OnTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
 			OnFloor = true;
+		}
+		
+		private function OverTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		{
+			OnFloor = false;
 		}
 		
 		public function GetPosY():Number
@@ -204,7 +169,7 @@ package objects
 		
 		public function GetInitPosY():Number
 		{
-			return 635.4749999999999;
+			return 585.4749999999999;;
 		}
 		
 		public function GetJumpValue():Boolean
@@ -226,5 +191,6 @@ package objects
 		{
 			JUMP = false;
 		}
+		
 	}
 }

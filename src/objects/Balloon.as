@@ -28,15 +28,18 @@ package objects
 		private var Xdirection:Number;
 		private var properties:PhysicsProperties = new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } );
 		//public var BalloonLives:Number = 3;
+		private var char:Character;
+		
 		
 		private var ind:Number;
 
 		
-		public function Balloon(fisicas:PhysInjector, index:Number) 
+		public function Balloon(fisicas:PhysInjector, index:Number, character:Character) 
 		{
 			super();
 			physics = fisicas;
 			ind = index;
+			char = character;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -69,17 +72,18 @@ package objects
 			
 			if (RIGHT)
 			{
-				Xdirection = -1 - Math.random() * 2;;
+				Xdirection = -2 - Math.random() * 1;
 				NormalBallonObject.x =  700 + Math.random() * 100;			}
 			else 
 			{
-				Xdirection = 1 + Math.random() * 2;
+				Xdirection = 2 + Math.random() * 1;
 				NormalBallonObject.x = - Math.random() * 100;
 			}	
-			//trace(PosY);
-			PosY = parent.y - 100 + Math.random() * 600;
-			//trace(PosY);
-
+			//esta  PosY = parent.y - 100 + Math.random() * 600;
+			
+			PosY = ObtainPosY() - Math.random() * 200;
+			
+			
 		//	PosY = Starling.current.nativeStage.stageHeight - 200 - Math.random() * 700;
 			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
 		}
@@ -97,7 +101,25 @@ package objects
 				this.parent.removeChild(this);
 			}
 			
-		}
+			if (NormalBallonObject.y > char.GetPosY()+500) 
+			{
+				//trace("borrado");
+				NormalBallonObject.physicsProperties.active = false;
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
+				this.parent.removeChild(this);
 				
+				
+			}
+			
+		}
+		
+		private function ObtainPosY():Number
+		{
+			var random:Number = Math.random();
+			if (random <= 0.1) return char.GetPosY();
+			if (random <= 0.6)	return char.GetPosY() -100;
+			if (random <= 0.9) return char.GetPosY() - 200;
+			return char.GetPosY() -300;
+		}	
 	}
 }

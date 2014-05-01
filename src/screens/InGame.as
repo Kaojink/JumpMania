@@ -35,34 +35,24 @@ package screens
 	//
 	
 	import events.Collision;
-	
-	import flash.media.Camera;
-	
-	 public class InGame extends Sprite
+
+	public class InGame extends Sprite
 	{
 		private var physics:PhysInjector;
 		
 		private var BG:BgLayer;
-		
-	//	private var bg:Image;
-	//	private var currentDate:Date;
-		
+
 		private var char:Character;
 		private var charobject:PhysicsObject;
 		
 		private var floor:Image;
 		private var floorObject:PhysicsObject;
 		
-		private var balloon1:Balloon;
-		private var balloon2:Balloon;
-		
 		private var generate:Boolean=true;
 		private var time:Date = new Date;
 		private var time2:Date = new Date;
 		
-		private var camera:Camera = new Camera();
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
-		private var offset:Number;
 		
 		private var index:Number = 0;
 		
@@ -86,28 +76,18 @@ package screens
 			
 			floor = new Image(Assets.getTexture("Ground"));
 			floor.width = 900;
-			floor.height = 100;
+			floor.height = 150;
             floor.x = -100;
-            floor.y = 700;
+            floor.y = 650;
             addChild( floor );
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.8, restitution:0 } ));
 			floorObject.name = "floor";
-			//floorObject.y;
-			
-			//balloon1 = new Balloon(physics);
-			//addChild(balloon1);
-			
-			//balloon2 = new Balloon(physics);
-			//addChild(balloon2);
-			
 
 			char = new Character(physics);
 			addChild(char);
 			
 			char.y = char.GetPosY();
-			offset = char.y;
-			this.y = char.y;
-			//injectPhysics();
+
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
 			addEventListener(Event.ENTER_FRAME, followChar);
@@ -120,16 +100,8 @@ package screens
 		
 		private function update():void
 		{ 
-		//	currentDate = new Date;
-		//	balloon1Object.y = 300 + (Math.cos(currentDate.getTime() * 0.002) * 15);
 			physics.update();
 		}
-		
-		/*private function injectPhysics():void
-		{
-			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
-			floorObject.name = "floor";
-		}*/
 		
 		private function RandomGenerate(e:EnterFrameEvent):void
 		{
@@ -140,24 +112,23 @@ package screens
 				time = new Date();
 				time2 = new Date();
 				
-				var globo:Balloon = new Balloon(physics, index);
+				var globo:Balloon = new Balloon(physics, index, char);
 				trace(index);
 				this.addChild(globo);
 				var colision:Collision = new Collision(index, char);
 				index++;
+				char.updateChild();
+				
 			}
 			else 
 			{
-				//trace(time);
-				//trace(time2);
 				time2 = new Date();
 				if (time2.getSeconds() < time.getSeconds())
 				{
-					if ( 60 + time2.getSeconds() - time.getSeconds() >= 1) generate = true;
+					if ( 60 + time2.getSeconds() - time.getSeconds() >= 0.4) generate = true;
 				}
-				else if (time2.getSeconds() - time.getSeconds() >= 1)
+				else if (time2.getSeconds() - time.getSeconds() >= 0.4)
 				{
-					//trace("3");
 					generate = true;
 				}
 			}
