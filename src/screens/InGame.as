@@ -55,6 +55,7 @@ package screens
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
 		
 		private var index:Number = 0;
+		private var landing:Boolean= false;
 		
 		public function InGame() 
 		{
@@ -113,7 +114,7 @@ package screens
 				time2 = new Date();
 				
 				var globo:Balloon = new Balloon(physics, index, char);
-				trace(index);
+				//trace(index);
 				this.addChild(globo);
 				var colision:Collision = new Collision(index, char);
 				index++;
@@ -138,8 +139,14 @@ package screens
 		{
 			char.y = char.GetPosY();
 			this.y = -char.y+char.GetInitPosY();
-			physics.globalOffsetY = -char.y+ char.GetInitPosY();
+			physics.globalOffsetY = -char.y + char.GetInitPosY();
+			
+			if (char.GetVelY() > 0 && char.y >= floor.y - char.height  -500) {
+
+				char.animate("JumpLanding");
+			}
 		}
+
 	}
 
 }

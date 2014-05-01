@@ -12,14 +12,24 @@ package
 	public class Assets
 	{
 		
-		[Embed(source = "../assets/fondos/BackgroundGround.png")]
+		[Embed(source = "../assets/fondos/background-Ground.png")]
 		public static const BG_ground:Class;
 		
-		[Embed(source = "../assets/fondos/ground-900x100.png")]
+		[Embed(source = "../assets/fondos/ground-900x150.png")]
 		public static const Ground:Class;
 		
-		[Embed(source = "../assets/personajes/globo.png")]
-		public static const Globo:Class;
+		[Embed(source = "../assets/fondos/Tree-400x500.png")]
+		public static const Tree:Class;
+		
+		[Embed(source = "../assets/fondos/Mountain-800-172.png")]
+		public static const Mountain:Class;
+		
+		
+		
+		
+		
+		[Embed(source = "../assets/personajes/Red_Balloon.png")]
+		public static const Red_Balloon:Class;
 		
 		/*[Embed(source = "../assets/graphics/welcome_hero.png")]
 		public static const WelcomeHero:Class;
@@ -56,9 +66,9 @@ package
 		}
 		public static function getTexture(name:String):starling.textures.Texture
 		{
-			
 			if (gameTextures[name] == undefined)
 			{
+				
 				var bitmap:Bitmap = new Assets[name]();
 				gameTextures[name] = Texture.fromBitmap(bitmap); //esto la convierte en una textura y se guarda en el diccionario
 			}

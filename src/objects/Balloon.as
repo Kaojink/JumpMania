@@ -53,7 +53,7 @@ package objects
 		private function CreateNormalBallon():void
 		{
 			//trace("hola");
-			NormalBallon = new Image(Assets.getTexture("Globo"));
+			NormalBallon = new Image(Assets.getTexture("Red_Balloon"));
 			NormalBallon.y = +900;
 			NormalBallon.width = dimension;
 			NormalBallon.height = dimension;

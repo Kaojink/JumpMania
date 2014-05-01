@@ -41,6 +41,7 @@ package objects
 		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
 		
+		
 		public function Character(fisicas:PhysInjector) 
 		{
 			super();
@@ -54,9 +55,13 @@ package objects
 			trace("Carga Personaje");
 			
 			character_animation =  new Animation(Assets.getAtlas());
-			character_animation.addAnimation("Idleanimation128_", 5,true);
-			character_animation.addAnimation("JumpAnimation128_", 7,false);
-			character_animation.play("Idleanimation128_");
+		
+			character_animation.addAnimation("Idleanimation128_", 5, true);
+			character_animation.addAnimation("JumpContact", 7, false);//Fase de contacto
+			character_animation.addAnimation("JumpAir", 5, false);// Fase de caida
+			character_animation.addAnimation("JumpLanding",5,false)//Fase de aterrizaje
+			animate("Idleanimation128_");
+			
 			addChild(character_animation);
 			
 		/*	character = new MovieClip(Assets.getAtlas().getTextures("Idleanimation128_"), 7);
@@ -138,12 +143,20 @@ package objects
 				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
+			trace(charobject.body.GetLinearVelocity().y);
 			if (OnFloor && JUMP)
 			{
-				character_animation.play("JumpAnimation128_");
-
+				
+				animate("JumpContact");
+				trace("contact");
+				
+				
 				OnFloor = false;
 				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
+			}
+			if (charobject.body.GetLinearVelocity().y > 0) 
+			{
+				animate("JumpAir");
 			}
 		}
 		
@@ -154,6 +167,7 @@ package objects
 		
 		private function OnTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
+			animate("Idleanimation128_");
 			OnFloor = true;
 		}
 		
@@ -190,6 +204,16 @@ package objects
 		public function Impulsed():void
 		{
 			JUMP = false;
+		}
+		public function animate(nombre:String):void
+		{
+			character_animation.play(nombre);
+			
+			
+		}
+		public function GetVelY():Number
+		{
+			return charobject.body.GetLinearVelocity().y;
 		}
 		
 	}

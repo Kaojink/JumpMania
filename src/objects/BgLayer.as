@@ -13,7 +13,11 @@ package objects
 	 */
 	public class BgLayer extends Sprite
 	{
-		private var background_ground:Image;
+		private var background_Ground:Image;
+		private var background_Sky:Image;
+		private var background_Space:Image;
+		private var Tree:Image;
+
 		
 		public function BgLayer() 
 		{
@@ -22,8 +26,14 @@ package objects
 		
 		private function init(event:Event):void 
 		{
-			background_ground = new Image(Assets.getTexture("BG_ground"));
-			this.addChild(background_ground);
+			
+			background_Ground = new Image(Assets.getTexture("BG_ground"));
+			this.addChild(background_Ground);
+			
+			Tree = new Image(Assets.getTexture("Tree"));
+			Tree.y = 150;
+			Tree.x = -20;
+			this.addChild(Tree);
 		}
 	
 	}
