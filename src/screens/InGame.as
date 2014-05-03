@@ -33,6 +33,7 @@ package screens
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	import com.reyco1.physinjector.contact.ContactManager;
 	//
+	import starling.text.TextField;
 	
 	import events.Collision;
 
@@ -57,6 +58,9 @@ package screens
 		private var index:Number = 0;
 		private var landing:Boolean= false;
 		
+		private var Score:Number = 0;
+		private var LastHigherPos:Number;
+		private var Text:TextField = new TextField(100, 50,"","Verdana", 12);
 		
 		public function InGame() 
 		{
@@ -89,6 +93,9 @@ package screens
 			addChild(char);
 			
 			char.y = char.GetPosY();
+			LastHigherPos = char.y;
+			Text.text = "Score: "+Score;
+			addChild(Text);
 
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
@@ -141,10 +148,14 @@ package screens
 			char.y = char.GetPosY();
 			this.y = -char.y+char.GetInitPosY();
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
+			Text.y = char.y - char.GetInitPosY() ;
 			
-			if (char.GetVelY() > 0 && char.y >= floor.y - 200) 
+			if (char.GetVelY() > 0 && char.y >= floor.y - 200) char.animate("JumpLanding");
+			if (char.GetVelY() < 0 && char.y < LastHigherPos) 
 			{
-				char.animate("JumpLanding");
+				LastHigherPos = char.y;
+				Score++;
+				Text.text = "Score: "+Score;
 			}
 		}
 
