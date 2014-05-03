@@ -117,9 +117,9 @@ package objects
 		{
 			var random:Number = Math.random();
 			if (random <= 0.1) return char.GetPosY();
-			if (random <= 0.6)	return char.GetPosY() -100;
-			if (random <= 0.9) return char.GetPosY() - 200;
-			return char.GetPosY() -300;
+			if (random <= 0.6)	return char.GetPosY() -75;
+			if (random <= 0.9) return char.GetPosY() - 150;
+			return char.GetPosY() -225;
 		}	
 	}
 }

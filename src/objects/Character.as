@@ -143,18 +143,15 @@ package objects
 				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
-			trace(charobject.body.GetLinearVelocity().y);
+
 			if (OnFloor && JUMP)
 			{
-				
-				animate("JumpContact");
-				trace("contact");
-				
+				animate("JumpContact");	
 				
 				OnFloor = false;
 				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
 			}
-			if (charobject.body.GetLinearVelocity().y > 0) 
+			if (charobject.body.GetLinearVelocity().y > 0 && charobject.y < 200) 
 			{
 				animate("JumpAir");
 			}
@@ -205,12 +202,13 @@ package objects
 		{
 			JUMP = false;
 		}
+		
 		public function animate(nombre:String):void
 		{
-			character_animation.play(nombre);
-			
-			
+			if (nombre == "JumpLanding" && character_animation.AnimationCompleted("JumpAir")) character_animation.play(nombre);
+			else character_animation.play(nombre);
 		}
+		
 		public function GetVelY():Number
 		{
 			return charobject.body.GetLinearVelocity().y;

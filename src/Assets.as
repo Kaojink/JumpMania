@@ -5,6 +5,7 @@ package
 	import flash.utils.Dictionary;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import screens.Animation
 	/**
 	 * ...
 	 * @author Yo 

@@ -57,6 +57,7 @@ package screens
 		private var index:Number = 0;
 		private var landing:Boolean= false;
 		
+		
 		public function InGame() 
 		{
 			super();
@@ -141,8 +142,8 @@ package screens
 			this.y = -char.y+char.GetInitPosY();
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
 			
-			if (char.GetVelY() > 0 && char.y >= floor.y - char.height  -500) {
-
+			if (char.GetVelY() > 0 && char.y >= floor.y - 200) 
+			{
 				char.animate("JumpLanding");
 			}
 		}
