@@ -11,6 +11,7 @@ package screens
 	import objects.Character;
 	import objects.BgLayer;
 	import objects.Balloon;
+	import objects.Enemies;
 	import starling.events.EnterFrameEvent;
 	//
 	import starling.events.Event;
@@ -60,7 +61,9 @@ package screens
 		
 		private var Score:Number = 0;
 		private var LastHigherPos:Number;
-		private var Text:TextField = new TextField(100, 50,"","Verdana", 12);
+		private var Text:TextField = new TextField(100, 50, "", "Verdana", 12);
+		
+		private var Foes:Enemies;
 		
 		public function InGame() 
 		{
@@ -96,6 +99,9 @@ package screens
 			LastHigherPos = char.y;
 			Text.text = "Score: "+Score;
 			addChild(Text);
+			
+			Foes = new Enemies();
+			addChild(Foes);
 
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);

@@ -52,7 +52,6 @@ package objects
 		
 		private function CreateNormalBallon():void
 		{
-			//trace("hola");
 			NormalBallon = new Image(Assets.getTexture("Red_Balloon"));
 			NormalBallon.y = +900;
 			NormalBallon.width = dimension;
@@ -61,10 +60,7 @@ package objects
 			
 			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
 			NormalBallonObject.body.SetFixedRotation(true);
-			//NormalBallonObject.x =  Math.random() * 700;
-			//NormalBallonObject.y = 600 + Math.random() * 100;
 			if (Math.random() >= 0.5) RIGHT = true;
-			//PosY = 600 + Math.random() * 100;
 			
 			NormalBallonObject.name = "balloon" + ind;
 			NormalBallonObject.physicsProperties.isSensor = true;
@@ -77,7 +73,7 @@ package objects
 			else 
 			{
 				Xdirection = 2 + Math.random() * 1;
-				NormalBallonObject.x = - Math.random() * 150;
+				NormalBallonObject.x = - Math.random() * 100;
 			}	
 			
 			PosY = ObtainPosY() - Math.random() * 175;

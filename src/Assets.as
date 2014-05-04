@@ -25,8 +25,8 @@ package
 		[Embed(source = "../assets/fondos/Mountain-800-172.png")]
 		public static const Mountain:Class;
 		
-		
-		
+		[Embed(source = "../assets/personajes/Plane.png")]
+		public static const Plane:Class;
 		
 		
 		[Embed(source = "../assets/personajes/Red_Balloon.png")]
