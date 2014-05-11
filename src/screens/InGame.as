@@ -8,10 +8,12 @@ package screens
 	import Box2D.Dynamics.Contacts.b2NullContact;
 	import events.NavigationEvent;
 	import flash.geom.Rectangle;
+	import objects.Background;
 	import objects.Character;
 	import objects.BgLayer;
 	import objects.Balloon;
 	import objects.Enemies;
+	import objects.Items;
 	import starling.events.EnterFrameEvent;
 	//
 	import starling.events.Event;
@@ -45,10 +47,9 @@ package screens
 		private var BG:BgLayer;
 
 		private var char:Character;
-		private var charobject:PhysicsObject;
 		
-		private var floor:Image;
-		private var floorObject:PhysicsObject;
+	//	private var floor:Image;
+	//	private var floorObject:PhysicsObject;
 		
 		private var generate:Boolean=true;
 		private var time:Date = new Date;
@@ -61,7 +62,12 @@ package screens
 		
 		private var Score:Number = 0;
 		private var LastHigherPos:Number;
+		private var LastThisY:Number;
 		private var Text:TextField = new TextField(100, 50, "", "Verdana", 12);
+		
+		private var BackObjects:Background;
+		
+		private var upgrades:Items;
 		
 		private var Foes:Enemies;
 		
@@ -79,30 +85,32 @@ package screens
 			
 			trace("InGame Screen");
 			
+			char = new Character(physics);		
 			
-			BG = new BgLayer(); //Declaramos el fondo
+			BG = new BgLayer(char); //Declaramos el fondo
 			this.addChild(BG);
 			
-			floor = new Image(Assets.getTexture("Ground"));
-			floor.width = 900;
-			floor.height = 150;
-            floor.x = -100;
-            floor.y = 650;
-            addChild( floor );
-			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.8, restitution:0 } ));
-			floorObject.name = "floor";
-
-			char = new Character(physics);
-			addChild(char);
+			BackObjects = new Background(physics);
+			addChild(BackObjects);
+			
+			Text.text = "Score: "+Score;
+			addChild(Text);
+		
+			addChild(char);	
 			
 			char.y = char.GetPosY();
 			LastHigherPos = char.y;
-			Text.text = "Score: "+Score;
-			addChild(Text);
 			
-			Foes = new Enemies();
+			Foes = new Enemies(physics, char);
+			Foes.name = "enemy";
 			addChild(Foes);
-
+			
+			upgrades = new Items();
+			addChild(upgrades);
+			
+			trace(this.y);
+			trace(physics.globalOffsetY);
+			
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
 			addEventListener(Event.ENTER_FRAME, followChar);
@@ -113,7 +121,7 @@ package screens
 			this.visible = true;
 		}
 		
-		private function update():void
+		private function update(e:EnterFrameEvent):void
 		{ 
 			physics.update();
 		}
@@ -126,23 +134,17 @@ package screens
 				generate = false;
 				time = new Date();
 				time2 = new Date();
-				
 				var globo:Balloon = new Balloon(physics, index, char);
-				//trace(index);
 				this.addChild(globo);
+				swapChildren(char, globo);
 				var colision:Collision = new Collision(index, char);
 				index++;
-				char.updateChild();
 				
 			}
 			else 
 			{
 				time2 = new Date();
-				if (time2.getSeconds() < time.getSeconds())
-				{
-					if ( 60 + time2.getSeconds() - time.getSeconds() >= 0.4) generate = true;
-				}
-				else if (time2.getSeconds() - time.getSeconds() >= 0.4)
+				if (time2.getTime() - time.getTime() >= 700)
 				{
 					generate = true;
 				}
@@ -154,16 +156,37 @@ package screens
 			char.y = char.GetPosY();
 			this.y = -char.y+char.GetInitPosY();
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
-			Text.y = char.y - char.GetInitPosY() ;
-			
-			if (char.GetVelY() > 0 && char.y >= floor.y - 200) char.animate("JumpLanding");
-			if (char.GetVelY() < 0 && char.y < LastHigherPos) 
+			Text.y = char.y - char.GetInitPosY();
+			//BG.y = char.y - char.GetInitPosY();
+			if (char.GetVelY() > 0 && char.y >= 400) char.animate("JumpLanding");
+			if (char.GetVelY() < 0 && char.y < LastHigherPos)
 			{
+				LastThisY = this.y;
 				LastHigherPos = char.y;
 				Score++;
 				Text.text = "Score: "+Score;
 			}
+
+			if (char.y >= LastHigherPos + 500 && LastThisY > 750) 
+			{
+				/*removeEventListener(Event.ENTER_FRAME, followChar);
+				removeEventListener(Event.ENTER_FRAME, RandomGenerate);
+				removeEventListener(Event.ENTER_FRAME, update);
+				removeChildren();
+
+				parent.removeChild(this);*/
+				
+				physics.globalOffsetY = 0;
+				char.RestartPos();
+				this.y = 0;
+				char.y = char.GetInitPosY();
+				LastHigherPos = char.y;
+				LastThisY = char.y;
+			
+			}
+			
 		}
+		
 
 	}
 

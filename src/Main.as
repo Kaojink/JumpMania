@@ -25,6 +25,7 @@ package
 			
 			starling = new Starling(Game, stage);
 			starling.start();
+			
 		}
 	}
 

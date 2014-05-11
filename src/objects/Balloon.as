@@ -1,7 +1,6 @@
 package objects 
 {
 	import Box2D.Common.Math.b2Vec2;
-	import Box2D.Common.Math.b2Vec3;
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -94,7 +93,7 @@ package objects
 				this.parent.removeChild(this);
 			}
 			
-			if (NormalBallonObject.y > char.GetPosY()+500) 
+			if (NormalBallonObject.y > char.GetPosY()+600 || NormalBallonObject.y < char.GetPosY()-900) 
 			{
 				NormalBallonObject.physicsProperties.active = false;
 				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);

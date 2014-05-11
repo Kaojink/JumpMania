@@ -75,7 +75,8 @@ package objects
 			//charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			
 			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
-			charobject.y = 585.4749999999999;
+			charobject.y = 585.4750000000001;
+			charobject.x = Starling.current.nativeStage.stageWidth/2;
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
 			//charobject.physicsProperties.isDraggable = false;
@@ -86,7 +87,10 @@ package objects
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
 			ContactManager.onContactBegin("char", "floor", OnTheFloor);
 			ContactManager.onContactEnd("char", "floor", OverTheFloor);
-			
+			ContactManager.onContactBegin("char", "plane", TouchPlane);
+			//ContactManager.onContactBegin("char", "enemy", HitEnemy);
+
+
 		}
 			
 		private function Movement(event:KeyboardEvent):void
@@ -157,9 +161,10 @@ package objects
 			}
 		}
 		
-		public function updateChild():void
+		
+		private function TouchPlane(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			//aqui se pondra al personaje delante de todos los objetos
+			if (ObjectB!=null)	trace("hola");
 		}
 		
 		private function OnTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
@@ -180,7 +185,7 @@ package objects
 		
 		public function GetInitPosY():Number
 		{
-			return 585.4749999999999;;
+			return 585.4750000000001;
 		}
 		
 		public function GetJumpValue():Boolean
@@ -212,6 +217,18 @@ package objects
 		public function GetVelY():Number
 		{
 			return charobject.body.GetLinearVelocity().y;
+		}
+		
+		public function EnableContact():void
+		{
+			ContactManager.onContactBegin("char", "plane", TouchPlane);		
+		}
+		public function RestartPos():void
+		{
+			charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
+			charobject.x = Starling.current.nativeStage.stageWidth/2;
+			charobject.y = GetInitPosY();
+			animate("Idleanimation128_");
 		}
 		
 	}

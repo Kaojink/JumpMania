@@ -16,6 +16,18 @@ package
 		[Embed(source = "../assets/fondos/background-Ground.png")]
 		public static const BG_ground:Class;
 		
+		[Embed(source = "../assets/fondos/DegGroundToSky.png")]
+		public static const GroundToSky:Class;
+		
+		[Embed(source = "../assets/fondos/background2.png")]
+		public static const BG_sky:Class;
+		
+		[Embed(source = "../assets/fondos/DegSkyToSpace.png")]
+		public static const SkyToSpace:Class;
+		
+		[Embed(source = "../assets/fondos/background3.png")]
+		public static const BG_space:Class;
+		
 		[Embed(source = "../assets/fondos/ground-900x150.png")]
 		public static const Ground:Class;
 		

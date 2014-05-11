@@ -9,6 +9,7 @@ package
 	import screens.InGame;
 	import screens.Welcome;
 	import starling.display.Sprite;
+	import starling.events.EnterFrameEvent;
 	import starling.events.Event;
 	
 	public class Game extends Sprite
@@ -32,14 +33,12 @@ package
 			//screenInGame.disposeTemporarily();
 			//this.addChild(screenInGame); esto es para dejar en espera la pantalla ingame
 			
-			//ScreenWelcome = new Welcome(); esto es para pasar a la pantalla de welcome
+			//ScreenWelcome = new Welcome(); //esto es para pasar a la pantalla de welcome
 			//this.addChild(ScreenWelcome);
 			//ScreenWelcome.initialize();
 			
 			//inicializo directamente ingame para ir directamente a la pantalla de juego, para hacerlo bien seria lo de abajo
-			ScreenInGame = new InGame();
-			this.addChild(ScreenInGame);
-			ScreenInGame.initialize();
+			StartGame();
 		}
 		
 		private function onChangeScreen(event:NavigationEvent):void
@@ -51,7 +50,17 @@ package
 					//screenInGame.initialize();
 					break;
 			}
+			
 		}
+		
+		private function StartGame():void
+		{
+			ScreenInGame = new InGame();
+			this.addChild(ScreenInGame);
+			ScreenInGame.initialize();
+		}
+		
+		
 		
 	}
 
