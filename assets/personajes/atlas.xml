@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
+<!-- $TexturePacker:SmartUpdate:74c1dd0f6e699b6a898a0ddda8a2adaa:c538b9f6643e62de614ffc84e1850d09:cde709370900f12288f3449eded86f07$ -->
+<TextureAtlas imagePath="atlas.png">
+    <SubTexture name="Bomb_drawing" x="2" y="2" width="64" height="64"/>
+    <SubTexture name="Cape" x="68" y="2" width="64" height="64"/>
+    <SubTexture name="Extra_Balloon" x="134" y="2" width="64" height="64"/>
+    <SubTexture name="Idleanimation128_01" x="200" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_02" x="266" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_03" x="332" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_04" x="398" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_05" x="464" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_06" x="530" y="2" width="64" height="128"/>
+    <SubTexture name="Idleanimation128_07" x="596" y="2" width="64" height="128"/>
+    <SubTexture name="JumpAir01" x="662" y="2" width="64" height="128"/>
+    <SubTexture name="JumpAir02" x="728" y="2" width="64" height="128"/>
+    <SubTexture name="JumpAir03" x="794" y="2" width="64" height="128"/>
+    <SubTexture name="JumpAir04" x="860" y="2" width="64" height="128"/>
+    <SubTexture name="JumpAir05" x="926" y="2" width="64" height="128"/>
+    <SubTexture name="JumpContact01" x="2" y="132" width="64" height="128"/>
+    <SubTexture name="JumpContact02" x="68" y="132" width="64" height="128"/>
+    <SubTexture name="JumpContact03" x="134" y="132" width="64" height="128"/>
+    <SubTexture name="JumpContact04" x="200" y="132" width="64" height="128"/>
+    <SubTexture name="JumpContact05" x="266" y="132" width="64" height="128"/>
+    <SubTexture name="JumpContact06" x="332" y="132" width="64" height="128"/>
+    <SubTexture name="JumpLanding01" x="398" y="132" width="64" height="128"/>
+    <SubTexture name="JumpLanding02" x="464" y="132" width="64" height="128"/>
+    <SubTexture name="JumpLanding03" x="530" y="132" width="64" height="128"/>
+    <SubTexture name="Kite01" x="596" y="132" width="256" height="128"/>
+    <SubTexture name="Kite02" x="2" y="262" width="256" height="128"/>
+    <SubTexture name="Kite03" x="260" y="262" width="256" height="128"/>
+    <SubTexture name="Kite04" x="518" y="262" width="256" height="128"/>
+    <SubTexture name="Kite05" x="2" y="392" width="256" height="128"/>
+    <SubTexture name="Kite06" x="260" y="392" width="256" height="128"/>
+    <SubTexture name="Kite07" x="518" y="392" width="256" height="128"/>
+    <SubTexture name="Kite08" x="2" y="522" width="256" height="128"/>
+    <SubTexture name="Kite09" x="260" y="522" width="256" height="128"/>
+    <SubTexture name="Kite10" x="518" y="522" width="256" height="128"/>
+    <SubTexture name="Kite11" x="2" y="652" width="256" height="128"/>
+    <SubTexture name="Kite12" x="260" y="652" width="256" height="128"/>
+    <SubTexture name="Red_Balloon" x="518" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon01" x="584" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon02" x="650" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon03" x="716" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon04" x="782" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon05" x="848" y="652" width="64" height="64"/>
+    <SubTexture name="Red_Balloon06" x="914" y="652" width="64" height="64"/>
+    <SubTexture name="box_plane" x="980" y="652" width="32" height="32"/>
+    <SubTexture name="cloud" x="2" y="782" width="128" height="64"/>
+    <SubTexture name="parachute" x="132" y="782" width="64" height="64"/>
+</TextureAtlas>
