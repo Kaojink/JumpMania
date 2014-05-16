@@ -1,5 +1,6 @@
 package objects 
 {
+	import screens.InGame;
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -15,7 +16,7 @@ package objects
 		private var lastDate:Date = new Date();
 		private var lastNumber:Number = -1;
 		private var currentNumber:Number = -2;
-		
+		private var type:String = "null";	
 		
 		public function Items() 
 		{
@@ -26,7 +27,9 @@ package objects
 		private function CreateItems(e:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, CreateItems);
-			ItemImage = new Image(Assets.getTexture("Plane"));
+			ItemImage = new Image(Assets.getAtlas().getTexture("Cape"));
+			type = "Cape";
+			ItemImage.y = 600;
 			ItemImage.width = 32;
 			ItemImage.height = 32;
 			addChild(ItemImage);
@@ -44,7 +47,8 @@ package objects
 				{
 					lastNumber = currentNumber;
 					lastDate =currentDate;
-					ChangeItem(randomRange(0,10));
+					ChangeItem(randomRange(0, 10));
+					if (getBounds(ItemImage).intersects(getBounds((parent as InGame).getChar()))) trace("un mojon pa mi");
 				}
 			}
 			
@@ -54,6 +58,28 @@ package objects
 		{
 			//trace(prob);
 			//poner probabilidades a los objetos y si sale entre tal y tal valor, que cargue uno
+			trace(prob);
+			switch (prob) 
+			{
+				//trace("switch");
+				case 0:
+					ItemImage.texture = Assets.getAtlas().getTexture("Extra_Balloon");
+					type = "Extra Balloon";
+					break;
+					
+				case 1:
+					ItemImage.texture = Assets.getAtlas().getTexture("Bomb_drawing");
+					type = "Bomb Drawing";
+					
+					break;
+					
+				case 5:
+					ItemImage.texture = Assets.getAtlas().getTexture("Cape");
+					type = "Cape";
+					break;
+				break;
+				//default:
+			}
 		}
 		
 		private function randomRange(minNum:Number, maxNum:Number):Number 
@@ -62,6 +88,10 @@ package objects
 			
 		}
 		
+		public function UpgradeType():String
+		{
+			return type;
+		}
 	}
 
 }

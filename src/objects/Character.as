@@ -1,5 +1,7 @@
 package objects 
 {
+	import events.Collision;
+	import screens.InGame;
 	import starling.core.Starling;
 	import starling.display.MovieClip;
 	import starling.display.Sprite;
@@ -40,6 +42,8 @@ package objects
 		private var lastMS:Number=0;
 		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
+		private var SkillActived:Boolean = false;
+		private var Lives:Number = 5;
 		
 		
 		public function Character(fisicas:PhysInjector) 
@@ -54,8 +58,8 @@ package objects
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			trace("Carga Personaje");
 			
-			character_animation =  new Animation(Assets.getAtlas());
-		
+			character_animation = new Animation(Assets.getAtlas());
+			
 			character_animation.addAnimation("Idleanimation128_", 5, true);
 			character_animation.addAnimation("JumpContact", 7, false);//Fase de contacto
 			character_animation.addAnimation("JumpAir", 5, false);// Fase de caida
@@ -76,7 +80,8 @@ package objects
 			
 			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			charobject.y = 585.4750000000001;
-			charobject.x = Starling.current.nativeStage.stageWidth/2;
+			charobject.x = Starling.current.nativeStage.stageWidth / 2;
+			charobject.physicsProperties.contactGroup = "char";
 			charobject.physicsProperties.density = 1;
 			charobject.body.SetFixedRotation(true);
 			//charobject.physicsProperties.isDraggable = false;
@@ -87,15 +92,21 @@ package objects
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
 			ContactManager.onContactBegin("char", "floor", OnTheFloor);
 			ContactManager.onContactEnd("char", "floor", OverTheFloor);
-			ContactManager.onContactBegin("char", "plane", TouchPlane);
+			//ContactManager.onContactBegin("char", "plane", TouchPlane);
+			
 			//ContactManager.onContactBegin("char", "enemy", HitEnemy);
 
 
 		}
+		
+		private function TouchEnemy(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		{
+			trace("hola");
+			//trace(ObjectB.name);			
+		}
 			
 		private function Movement(event:KeyboardEvent):void
 		{
-			
 			switch (event.keyCode)
 			{
 			  case 39: //derecha
@@ -111,8 +122,13 @@ package objects
 					JUMP = true;
 				}
 				break;
+			  case 90:
+				if(!SkillActived) SkillActived = true;
+				break;
 			}
 		}
+		
+		
 		
 		private function Stop(event:KeyboardEvent):void 
 		{
@@ -125,7 +141,11 @@ package objects
 				LEFT = false;
 				break;
 			  case 32: //barra
+				SkillActived = false;
 				JUMP = false;
+				break;
+			  case 90: //barra
+				SkillActived = false;
 				break;
 			}
 		}
@@ -159,12 +179,17 @@ package objects
 			{
 				animate("JumpAir");
 			}
+			if (SkillActived)
+			{
+				SkillActived = false;
+				UseSkill();
+			}
 		}
 		
 		
 		private function TouchPlane(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			if (ObjectB!=null)	trace("hola");
+			trace(ObjectB.name);
 		}
 		
 		private function OnTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
@@ -183,30 +208,35 @@ package objects
 			return charobject.y;
 		}
 		
+		public function GetPosX():Number
+		{
+			return charobject.x;
+		}
+		
 		public function GetInitPosY():Number
 		{
 			return 585.4750000000001;
 		}
 		
-		public function GetJumpValue():Boolean
+	/*	public function GetJumpValue():Boolean
 		{
 			return JUMP;
-		}
+		}*/
 		
-		public function GetOnFloorValue():Boolean
+	/*	public function GetOnFloorValue():Boolean
 		{
 			return OnFloor;
-		}
+		}*/
 		
-		public function GetLastDate():Date
+	/*	public function GetLastDate():Date
 		{
 			return lastDate;
-		}
+		}*/
 		
-		public function Impulsed():void
+		/*public function Impulsed():void
 		{
 			JUMP = false;
-		}
+		}*/
 		
 		public function animate(nombre:String):void
 		{
@@ -221,7 +251,8 @@ package objects
 		
 		public function EnableContact():void
 		{
-			ContactManager.onContactBegin("char", "plane", TouchPlane);		
+			ContactManager.onContactBegin("char", "enemy", TouchEnemy, true);
+			ContactManager.onContactBegin("char", "balloon", Rebound, true);		
 		}
 		public function RestartPos():void
 		{
@@ -229,6 +260,61 @@ package objects
 			charobject.x = Starling.current.nativeStage.stageWidth/2;
 			charobject.y = GetInitPosY();
 			animate("Idleanimation128_");
+		}
+		
+		private function UseSkill():void
+		{
+			var index:Number = (parent as InGame).getindex();
+			var balloon:Balloon = new Balloon(physics, index, this, true);
+			balloon.name = "balloon" + index;
+			//var collision:Collision = new Collision(index, balloon, this);
+			parent.addChild(balloon);
+		}
+		
+		public function GetLives():Number
+		{
+			return Lives;
+		}
+		
+		public function TakeLife():void
+		{
+			Lives--;
+		}
+		
+		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
+		{
+			if (ObjectA.y + 64 <= ObjectB.y + 16)
+			{
+				ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
+				if (!OnFloor && JUMP)
+				{
+					currentDate = new Date(); //fecha de cuando choca
+					lastMS = lastDate.getTime(); //tiempo de cuando apreto boton JUMP
+					newMS = currentDate.getTime(); // tiempo de choque
+					
+					trace(newMS - lastMS);
+					
+					if (newMS - lastMS <= 100) 
+					{
+						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
+						animate("JumpContact");
+						JUMP = false;
+					}
+					
+					else
+					{
+						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
+						animate("JumpContact");
+					}
+					
+				}
+				else
+				{
+					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
+					animate("JumpContact");
+				}	
+				(parent as InGame).animateCorrectBalloon(ObjectB.name);
+			}
 		}
 		
 	}

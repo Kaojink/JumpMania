@@ -44,6 +44,9 @@ package
 		[Embed(source = "../assets/personajes/Red_Balloon.png")]
 		public static const Red_Balloon:Class;
 		
+		[Embed(source = "../assets/personajes/Black_Balloon.png")]
+		public static const Black_Balloon:Class;
+		
 		/*[Embed(source = "../assets/graphics/welcome_hero.png")]
 		public static const WelcomeHero:Class;
 		

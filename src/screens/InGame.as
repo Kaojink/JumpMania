@@ -63,7 +63,8 @@ package screens
 		private var Score:Number = 0;
 		private var LastHigherPos:Number;
 		private var LastThisY:Number;
-		private var Text:TextField = new TextField(100, 50, "", "Verdana", 12);
+		private var ScoreText:TextField = new TextField(100, 50, "", "Verdana", 12);
+		private var LifeText:TextField = new TextField(100, 50, "", "Verdana", 12);
 		
 		private var BackObjects:Background;
 		
@@ -93,8 +94,12 @@ package screens
 			BackObjects = new Background(physics);
 			addChild(BackObjects);
 			
-			Text.text = "Score: "+Score;
-			addChild(Text);
+			ScoreText.text = "Score: "+Score;
+			addChild(ScoreText);
+			
+			LifeText.text = char.GetLives() + "  X";
+			LifeText.x = Starling.current.nativeStage.stageWidth - LifeText.width;
+			addChild(LifeText);
 		
 			addChild(char);	
 			
@@ -102,14 +107,13 @@ package screens
 			LastHigherPos = char.y;
 			
 			Foes = new Enemies(physics, char);
-			Foes.name = "enemy";
 			addChild(Foes);
 			
 			upgrades = new Items();
+			upgrades.name = "upgrades";
 			addChild(upgrades);
 			
-			trace(this.y);
-			trace(physics.globalOffsetY);
+			char.EnableContact();
 			
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, RandomGenerate);
@@ -134,11 +138,18 @@ package screens
 				generate = false;
 				time = new Date();
 				time2 = new Date();
-				var globo:Balloon = new Balloon(physics, index, char);
+				var globo:Balloon = new Balloon(physics, index, char, false);
+				globo.name = "balloon" + index;
 				this.addChild(globo);
 				swapChildren(char, globo);
-				var colision:Collision = new Collision(index, char);
+				//trace(this.getChildIndex(globo));
+				/*if (globo.GetColour() != "black")
+				{
+					var colision:Collision = new Collision(index, globo, char);
+				}*/
+				//trace("antes " + index);
 				index++;
+				//trace("despues " + index);
 				
 			}
 			else 
@@ -154,9 +165,11 @@ package screens
 		private function followChar(e:EnterFrameEvent):void
 		{
 			char.y = char.GetPosY();
+			char.x = char.GetPosX();
 			this.y = -char.y+char.GetInitPosY();
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
-			Text.y = char.y - char.GetInitPosY();
+			ScoreText.y = char.y - char.GetInitPosY();
+			LifeText.y = ScoreText.y;
 			//BG.y = char.y - char.GetInitPosY();
 			if (char.GetVelY() > 0 && char.y >= 400) char.animate("JumpLanding");
 			if (char.GetVelY() < 0 && char.y < LastHigherPos)
@@ -164,7 +177,7 @@ package screens
 				LastThisY = this.y;
 				LastHigherPos = char.y;
 				Score++;
-				Text.text = "Score: "+Score;
+				ScoreText.text = "Score: "+Score;
 			}
 
 			if (char.y >= LastHigherPos + 500 && LastThisY > 750) 
@@ -182,11 +195,27 @@ package screens
 				char.y = char.GetInitPosY();
 				LastHigherPos = char.y;
 				LastThisY = char.y;
-			
 			}
 			
 		}
 		
+		public function getindex():Number
+		{
+			var index2:Number = index;
+			index++;
+			//trace("item " + index2);
+			return index2;
+		}
+		
+		public function animateCorrectBalloon(nombre:String):void
+		{
+			(getChildByName(nombre) as Balloon).animateBalloon();
+		}
+		
+		public function getChar():Character
+		{
+			return char;
+		}
 
 	}
 

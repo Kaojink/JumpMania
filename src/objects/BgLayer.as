@@ -42,11 +42,11 @@ package objects
 		
 		private function Parallax(e:EnterFrameEvent):void 
 		{	
-			trace(character.y);
+			//trace(character.y);
 			if (!Reload && character.y < 0 ) Reload = true;
 			if (Reload && character.y > 0) 
 			{
-				trace("Reinicio Fondo");
+				//trace("Reinicio Fondo");
 				Reload = false;
 				CurrentTexture = Assets.getTexture("BG_ground");
 				backgroundMid.texture = CurrentTexture;
