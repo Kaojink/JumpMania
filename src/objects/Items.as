@@ -29,16 +29,19 @@ package objects
 			removeEventListener(Event.ADDED_TO_STAGE, CreateItems);
 			ItemImage = new Image(Assets.getAtlas().getTexture("Cape"));
 			type = "Cape";
-			ItemImage.y = 600;
+			ItemImage.y = (parent.parent as InGame).getChar().y - Starling.current.nativeStage.stageHeight;
+			ItemImage.x = randomRange(0, Starling.current.nativeStage.stageWidth - ItemImage.width);
 			ItemImage.width = 32;
 			ItemImage.height = 32;
 			addChild(ItemImage);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, Timer);
 		}
-	
+		
+		
 		private function Timer(event:EnterFrameEvent):void
 		{
 			//cada 0'25 segundos
+			ItemImage.y += 4;
 			var currentDate:Date = new Date();
 			if (currentDate.getTime() > lastDate.getTime() +250) 
 			{
@@ -48,7 +51,7 @@ package objects
 					lastNumber = currentNumber;
 					lastDate =currentDate;
 					ChangeItem(randomRange(0, 10));
-					if (getBounds(ItemImage).intersects(getBounds((parent as InGame).getChar()))) trace("un mojon pa mi");
+					if (getBounds(ItemImage).intersects(getBounds((parent.parent as InGame).getChar()))) trace("un mojon pa mi");
 				}
 			}
 			

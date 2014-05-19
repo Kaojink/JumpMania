@@ -7,7 +7,9 @@ package screens
 	
 	import Box2D.Dynamics.Contacts.b2NullContact;
 	import events.NavigationEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	import objects.Background;
 	import objects.Character;
 	import objects.BgLayer;
@@ -68,9 +70,13 @@ package screens
 		
 		private var BackObjects:Background;
 		
-		private var upgrades:Items;
-		
 		private var Foes:Enemies;
+		
+		private var timer:Timer;
+		
+		private var layerBallons:Sprite;
+		private var layerEnemies:Sprite;
+		private var layerChar:Sprite;
 		
 		public function InGame() 
 		{
@@ -86,13 +92,21 @@ package screens
 			
 			trace("InGame Screen");
 			
+			layerBallons = new Sprite();
+			layerEnemies = new Sprite();
+			layerChar = new Sprite();
+				
 			char = new Character(physics);		
 			
 			BG = new BgLayer(char); //Declaramos el fondo
 			this.addChild(BG);
-			
+					
 			BackObjects = new Background(physics);
 			addChild(BackObjects);
+			
+			addChild(layerBallons);
+			addChild(layerEnemies);
+			addChild(layerChar);
 			
 			ScoreText.text = "Score: "+Score;
 			addChild(ScoreText);
@@ -101,25 +115,30 @@ package screens
 			LifeText.x = Starling.current.nativeStage.stageWidth - LifeText.width;
 			addChild(LifeText);
 		
-			addChild(char);	
+			layerChar.addChild(char);	
 			
 			char.y = char.GetPosY();
 			LastHigherPos = char.y;
 			
 			Foes = new Enemies(physics, char);
-			addChild(Foes);
-			
-			upgrades = new Items();
-			upgrades.name = "upgrades";
-			addChild(upgrades);
+			layerEnemies.addChild(Foes);
 			
 			char.EnableContact();
 			
 			addEventListener(Event.ENTER_FRAME, update);
-			addEventListener(Event.ENTER_FRAME, RandomGenerate);
 			addEventListener(Event.ENTER_FRAME, followChar);
-		}
 			
+			timer = new Timer(500);
+			timer.addEventListener(TimerEvent.TIMER, RandomGenerate);
+			timer.start();
+		}
+		
+		public function generateItem ():void
+		{
+			var upgrades:Items = new Items();
+			layerChar.addChild(upgrades);
+		}
+		
 		public function initialize():void
 		{
 			this.visible = true;
@@ -130,36 +149,11 @@ package screens
 			physics.update();
 		}
 		
-		private function RandomGenerate(e:EnterFrameEvent):void
+		private function RandomGenerate(e:TimerEvent):void
 		{
-			if (generate)
-			{
-				//trace("1");
-				generate = false;
-				time = new Date();
-				time2 = new Date();
-				var globo:Balloon = new Balloon(physics, index, char, false);
-				globo.name = "balloon" + index;
-				this.addChild(globo);
-				swapChildren(char, globo);
-				//trace(this.getChildIndex(globo));
-				/*if (globo.GetColour() != "black")
-				{
-					var colision:Collision = new Collision(index, globo, char);
-				}*/
-				//trace("antes " + index);
-				index++;
-				//trace("despues " + index);
-				
-			}
-			else 
-			{
-				time2 = new Date();
-				if (time2.getTime() - time.getTime() >= 700)
-				{
-					generate = true;
-				}
-			}
+			var globo:Balloon = new Balloon(physics, index, char, false);			
+			layerBallons.addChild(globo);
+			index++;
 		}
 		
 		private function followChar(e:EnterFrameEvent):void
@@ -203,18 +197,22 @@ package screens
 		{
 			var index2:Number = index;
 			index++;
-			//trace("item " + index2);
 			return index2;
 		}
 		
 		public function animateCorrectBalloon(nombre:String):void
 		{
-			(getChildByName(nombre) as Balloon).animateBalloon();
+			(layerBallons.getChildByName(nombre) as Balloon).animateBalloon();
 		}
 		
 		public function getChar():Character
 		{
 			return char;
+		}
+		
+		public function getLayer():Sprite
+		{
+			return layerBallons;
 		}
 
 	}

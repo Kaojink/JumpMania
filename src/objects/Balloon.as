@@ -17,7 +17,7 @@ package objects
 	 */
 	public class Balloon extends Sprite
 	{
-		private var NormalBallon:Image;
+		private var NormalBallon:Animation;
 		private var NormalBallonObject:PhysicsObject;
 		private var dimension:Number = 64;
 		private var vMax:Number = 0.6;
@@ -30,7 +30,7 @@ package objects
 		private var BalloonLives:Number = 5;
 		private var isUpgrade:Boolean = false;
 		private var char:Character;
-		private var colour:String = "Red";
+		private var colour:String;
 		
 		
 		private var ind:Number;
@@ -43,6 +43,7 @@ package objects
 			ind = index;
 			char = character;
 			isUpgrade = boolean;
+			name = "balloon" + index;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -55,20 +56,35 @@ package objects
 		
 		private function CreateNormalBallon():void
 		{
-			if (Math.random() > 0.5) colour = "Black";
 			
-			if (colour == "Red" || isUpgrade)
+			if (Math.random() > 0.5) colour = "Black";
+			switch (Math.floor(Math.random() * (6 )) + 1)
 			{
-				/*NormalBallon = new Animation(Assets.getAtlas());
-				NormalBallon.addAnimation("Red_Balloon01", 1, false);
-				NormalBallon.addAnimation("Red_Balloon", 18, false);
-				NormalBallon.play("Red_Balloon01");
-				NormalBallon.addAnimation("Red_BalloonReverse", 18, false);*/
-				NormalBallon = new Image(Assets.getTexture("Red_Balloon"));
-				NormalBallon.y = +900;
-				NormalBallon.width = dimension;
-				NormalBallon.height = dimension;
-				this.addChild(NormalBallon);
+				case 1: colour = "Red"; break;
+				
+				case 2: colour = "Blue"; break;
+				
+				case 3: colour = "DarkBlue"; break;
+				
+				case 4: colour = "Pink"; break;
+				
+				case 5: colour = "Violet"; break;
+				
+				case 6: colour = "Green"; break;
+			}
+			NormalBallon = new Animation(Assets.getAtlas());
+			NormalBallon.addAnimation(colour + "_Balloon01", 1, false);
+			NormalBallon.addAnimation(colour + "_Balloon", 18, false);
+			NormalBallon.play(colour + "_Balloon01");
+			NormalBallon.addAnimation(colour + "_BalloonReverse", 18, false);
+			NormalBallon.y = +900;
+			NormalBallon.width = dimension;
+			NormalBallon.height = dimension;
+			this.addChild(NormalBallon);
+			
+			if (colour != "Black"  || isUpgrade)
+			{
+				//NormalBallon = new Image(Assets.getTexture("Red_Balloon"));
 				NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
 				NormalBallonObject.name = "balloon" + ind;
 				NormalBallonObject.physicsProperties.contactGroup = "balloon";
@@ -76,14 +92,10 @@ package objects
 			}
 			else 
 			{
-				NormalBallon = new Image(Assets.getTexture("Black_Balloon"));
-				NormalBallon.y = +900;
-				NormalBallon.width = dimension;
-				NormalBallon.height = dimension;
-				this.addChild(NormalBallon);
+				//NormalBallon = new Image(Assets.getTexture("Black_Balloon"));
 				NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100, contactGroup:"enemy" } ));
 				//NormalBallonObject.physicsProperties.contactGroup = "enemy";
-				NormalBallonObject.name = "enemy";
+				//NormalBallonObject.name = "enemy";
 				//NormalBallonObject.name = "balloon" + ind;
 
 			}		
@@ -155,29 +167,24 @@ package objects
 		}	
 		
 		
-		public function animateBalloon(nombre:String):void
+		public function animateBalloon():void
 		{
 			//trace("animado");
-			NormalBallon.play("Red_Balloon");
-			//NormalBallon.play(nombre);
+			NormalBallon.play(colour + "_Balloon");
 			addEventListener(EnterFrameEvent.ENTER_FRAME, ReturnNormalFrame);
 		}
 		
-		/*private function ReturnNormalFrame(e:EnterFrameEvent):void 
+		private function ReturnNormalFrame(e:EnterFrameEvent):void 
 		{
-			if (NormalBallon.AnimationCompleted("Red_Balloon"))
+			if (NormalBallon.AnimationCompleted(colour + "_Balloon"))
 			{
 				removeEventListener(EnterFrameEvent.ENTER_FRAME, ReturnNormalFrame);
-				//NormalBallon.play("Red_BalloonReverse");
+				NormalBallon.play(colour + "_BalloonReverse");
 			}
-		}*/
+		}
 		//
 			
 		
-		public function GetColour():String
-		{
-			return colour;
-		}
 			
 		/*private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2contact):void
 		{

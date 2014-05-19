@@ -43,7 +43,8 @@ package objects
 		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
 		private var SkillActived:Boolean = false;
-		private var Lives:Number = 5;
+		private var Lives:Number = 5; 
+		private var count_jump:Number=0;
 		
 		
 		public function Character(fisicas:PhysInjector) 
@@ -159,11 +160,13 @@ package objects
 
 			if (LEFT)
 			{
+				character_animation.scaleX = -1;
 				if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(-vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
 			if (RIGHT) 
 			{
+				character_animation.scaleX = 1;
 				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
 				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
 			}
@@ -218,26 +221,6 @@ package objects
 			return 585.4750000000001;
 		}
 		
-	/*	public function GetJumpValue():Boolean
-		{
-			return JUMP;
-		}*/
-		
-	/*	public function GetOnFloorValue():Boolean
-		{
-			return OnFloor;
-		}*/
-		
-	/*	public function GetLastDate():Date
-		{
-			return lastDate;
-		}*/
-		
-		/*public function Impulsed():void
-		{
-			JUMP = false;
-		}*/
-		
 		public function animate(nombre:String):void
 		{
 			if (nombre == "JumpLanding" && character_animation.AnimationCompleted("JumpAir")) character_animation.play(nombre);
@@ -264,11 +247,10 @@ package objects
 		
 		private function UseSkill():void
 		{
-			var index:Number = (parent as InGame).getindex();
+			var index:Number = (parent.parent as InGame).getindex();
 			var balloon:Balloon = new Balloon(physics, index, this, true);
 			balloon.name = "balloon" + index;
-			//var collision:Collision = new Collision(index, balloon, this);
-			parent.addChild(balloon);
+			(parent.parent as InGame).getLayer().addChild(balloon);
 		}
 		
 		public function GetLives():Number
@@ -292,19 +274,26 @@ package objects
 					lastMS = lastDate.getTime(); //tiempo de cuando apreto boton JUMP
 					newMS = currentDate.getTime(); // tiempo de choque
 					
-					trace(newMS - lastMS);
 					
 					if (newMS - lastMS <= 100) 
 					{
 						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
 						animate("JumpContact");
 						JUMP = false;
+						count_jump++;
+						if (count_jump >= 2)
+						{
+							count_jump = 0;
+							(parent.parent as InGame).generateItem();							
+						}
 					}
+					
 					
 					else
 					{
 						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
 						animate("JumpContact");
+						
 					}
 					
 				}
@@ -313,9 +302,11 @@ package objects
 					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
 					animate("JumpContact");
 				}	
-				(parent as InGame).animateCorrectBalloon(ObjectB.name);
+				(parent.parent as InGame).animateCorrectBalloon(ObjectB.name);
 			}
 		}
+		
+
 		
 	}
 }
