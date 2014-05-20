@@ -36,7 +36,6 @@ package screens
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
-	import com.reyco1.physinjector.contact.ContactManager;
 	//
 	import starling.text.TextField;
 	
@@ -65,8 +64,10 @@ package screens
 		private var Score:Number = 0;
 		private var LastHigherPos:Number;
 		private var LastThisY:Number;
-		private var ScoreText:TextField = new TextField(100, 50, "", "Verdana", 12);
-		private var LifeText:TextField = new TextField(100, 50, "", "Verdana", 12);
+
+		private var ScoreText:TextField = new TextField(200, 100, "", Assets.getFont().name, 24,0xEAFF5E);
+		private var LifeText:TextField = new TextField(100, 50, "",Assets.getFont().name, 20,0xEAFF5E);
+		private var LifeIcon:Image;
 		
 		private var BackObjects:Background;
 		
@@ -111,9 +112,15 @@ package screens
 			ScoreText.text = "Score: "+Score;
 			addChild(ScoreText);
 			
-			LifeText.text = char.GetLives() + "  X";
+			LifeText.text = "X  " + char.GetLives() ;
 			LifeText.x = Starling.current.nativeStage.stageWidth - LifeText.width;
 			addChild(LifeText);
+			
+			LifeIcon = new Image(Assets.getAtlas().getTexture("character_life"));
+			LifeIcon.scaleX = 0.75;
+			LifeIcon.scaleY = 0.75;
+			LifeIcon.x= Starling.current.nativeStage.stageWidth - LifeText.width-LifeIcon.width/2;
+			this.addChild(LifeIcon);
 		
 			layerChar.addChild(char);	
 			
@@ -156,6 +163,11 @@ package screens
 			index++;
 		}
 		
+		public function UpdateLives():void 
+		{
+			LifeText.text =  "X  " + char.GetLives() ;
+		}
+		
 		private function followChar(e:EnterFrameEvent):void
 		{
 			char.y = char.GetPosY();
@@ -164,6 +176,8 @@ package screens
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
 			ScoreText.y = char.y - char.GetInitPosY();
 			LifeText.y = ScoreText.y;
+			
+			LifeIcon.y = LifeText.y;
 			//BG.y = char.y - char.GetInitPosY();
 			if (char.GetVelY() > 0 && char.y >= 400) char.animate("JumpLanding");
 			if (char.GetVelY() < 0 && char.y < LastHigherPos)
@@ -200,9 +214,16 @@ package screens
 			return index2;
 		}
 		
-		public function animateCorrectBalloon(nombre:String):void
+		public function animateOrEraseCorrectBalloon(nombre:String, action:String):void
 		{
-			(layerBallons.getChildByName(nombre) as Balloon).animateBalloon();
+			if (action == "Animate")	
+			{
+				(layerBallons.getChildByName(nombre) as Balloon).animateBalloon();
+			}
+			if (action == "Erase") 
+			{
+				(layerBallons.getChildByName(nombre) as Balloon).EraseBalloon();
+			}
 		}
 		
 		public function getChar():Character

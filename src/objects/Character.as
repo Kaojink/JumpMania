@@ -1,6 +1,8 @@
 package objects 
 {
 	import events.Collision;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import screens.InGame;
 	import starling.core.Starling;
 	import starling.display.MovieClip;
@@ -44,7 +46,9 @@ package objects
 		private var OnFloor:Boolean = true;
 		private var SkillActived:Boolean = false;
 		private var Lives:Number = 5; 
-		private var count_jump:Number=0;
+		private var count_jump:Number = 0;
+		private var CharHit:Boolean = false;
+		private var timer:Timer;
 		
 		
 		public function Character(fisicas:PhysInjector) 
@@ -93,6 +97,8 @@ package objects
 			addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
 			ContactManager.onContactBegin("char", "floor", OnTheFloor);
 			ContactManager.onContactEnd("char", "floor", OverTheFloor);
+			
+			
 			//ContactManager.onContactBegin("char", "plane", TouchPlane);
 			
 			//ContactManager.onContactBegin("char", "enemy", HitEnemy);
@@ -234,7 +240,7 @@ package objects
 		
 		public function EnableContact():void
 		{
-			ContactManager.onContactBegin("char", "enemy", TouchEnemy, true);
+			//ContactManager.onContactBegin("char", "enemy", TouchEnemy, true);
 			ContactManager.onContactBegin("char", "balloon", Rebound, true);		
 		}
 		public function RestartPos():void
@@ -249,7 +255,7 @@ package objects
 		{
 			var index:Number = (parent.parent as InGame).getindex();
 			var balloon:Balloon = new Balloon(physics, index, this, true);
-			balloon.name = "balloon" + index;
+			//balloon.name = "balloon" + index;
 			(parent.parent as InGame).getLayer().addChild(balloon);
 		}
 		
@@ -261,48 +267,72 @@ package objects
 		public function TakeLife():void
 		{
 			Lives--;
+			(parent.parent as InGame).UpdateLives();
+		}
+		
+		private function ActiveInvincibility(event:TimerEvent):void
+		{
+			trace("hola");
+			CharHit = false;
+	//		timer.reset();
+		//	timer.removeEventListener(TimerEvent.TIMER, ActiveInvincibility);
 		}
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
 			if (ObjectA.y + 64 <= ObjectB.y + 16)
 			{
-				ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
-				if (!OnFloor && JUMP)
+				if (ObjectB.name.substr(0,5) == "Black" && !CharHit)
 				{
-					currentDate = new Date(); //fecha de cuando choca
-					lastMS = lastDate.getTime(); //tiempo de cuando apreto boton JUMP
-					newMS = currentDate.getTime(); // tiempo de choque
-					
-					
-					if (newMS - lastMS <= 100) 
+					trace(ObjectB.name);
+					ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
+					TakeLife();					
+					//CharHit = true;
+					//timer = new Timer(2250);
+					//timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
+					//timer.start();
+					//(parent.parent as InGame).animateOrEraseCorrectBalloon(ObjectB.name, "Erase");
+				}
+				else 
+				{
+					ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
+					if (!OnFloor && JUMP)
 					{
-						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
-						animate("JumpContact");
-						JUMP = false;
-						count_jump++;
-						if (count_jump >= 2)
+						currentDate = new Date(); //fecha de cuando choca
+						lastMS = lastDate.getTime(); //tiempo de cuando apreto boton JUMP
+						newMS = currentDate.getTime(); // tiempo de choque
+						
+						
+						if (newMS - lastMS <= 100) 
 						{
-							count_jump = 0;
-							(parent.parent as InGame).generateItem();							
+							ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
+							animate("JumpContact");
+							JUMP = false;
+							count_jump++;
+							if (count_jump >= 2)
+							{
+								count_jump = 0;
+								(parent.parent as InGame).generateItem();							
+							}
 						}
+						
+						
+						else
+						{
+							ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
+							animate("JumpContact");
+							
+						}
+						
 					}
-					
-					
 					else
 					{
 						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
 						animate("JumpContact");
-						
-					}
-					
+					}	
+					(parent.parent as InGame).animateOrEraseCorrectBalloon(ObjectB.name, "Erase");
 				}
-				else
-				{
-					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
-					animate("JumpContact");
-				}	
-				(parent.parent as InGame).animateCorrectBalloon(ObjectB.name);
+				
 			}
 		}
 		

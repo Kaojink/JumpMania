@@ -1,5 +1,7 @@
 package objects 
 {
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import screens.InGame;
 	import starling.core.Starling;
 	import starling.display.Image;
@@ -17,6 +19,7 @@ package objects
 		private var lastNumber:Number = -1;
 		private var currentNumber:Number = -2;
 		private var type:String = "null";	
+		private var timer:Timer;
 		
 		public function Items() 
 		{
@@ -34,37 +37,32 @@ package objects
 			ItemImage.width = 32;
 			ItemImage.height = 32;
 			addChild(ItemImage);
-			addEventListener(EnterFrameEvent.ENTER_FRAME, Timer);
+			
+			timer = new Timer(250);
+			timer.addEventListener(TimerEvent.TIMER, Update);
+			timer.start();
+			
+			addEventListener(EnterFrameEvent.ENTER_FRAME, Movement);
+		}
+		
+		private function Movement(event:EnterFrameEvent):void
+		{
+			ItemImage.y += 4;
+			if (getBounds(ItemImage).intersects(getBounds((parent.parent as InGame).getChar()))) trace("un mojon pa mi");
 		}
 		
 		
-		private function Timer(event:EnterFrameEvent):void
+		private function Update(event:TimerEvent):void
 		{
 			//cada 0'25 segundos
-			ItemImage.y += 4;
-			var currentDate:Date = new Date();
-			if (currentDate.getTime() > lastDate.getTime() +250) 
-			{
-				currentNumber = randomRange(0, 10);
-				if (lastNumber != currentNumber)
-				{
-					lastNumber = currentNumber;
-					lastDate =currentDate;
-					ChangeItem(randomRange(0, 10));
-					if (getBounds(ItemImage).intersects(getBounds((parent.parent as InGame).getChar()))) trace("un mojon pa mi");
-				}
-			}
-			
+			ChangeItem(randomRange(0, 10));
 		}
 		
 		private function ChangeItem(prob:Number):void
 		{
-			//trace(prob);
-			//poner probabilidades a los objetos y si sale entre tal y tal valor, que cargue uno
 			trace(prob);
 			switch (prob) 
 			{
-				//trace("switch");
 				case 0:
 					ItemImage.texture = Assets.getAtlas().getTexture("Extra_Balloon");
 					type = "Extra Balloon";
@@ -81,7 +79,6 @@ package objects
 					type = "Cape";
 					break;
 				break;
-				//default:
 			}
 		}
 		

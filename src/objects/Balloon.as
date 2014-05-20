@@ -43,7 +43,7 @@ package objects
 			ind = index;
 			char = character;
 			isUpgrade = boolean;
-			name = "balloon" + index;
+			//name = "balloon" + index;
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -57,21 +57,26 @@ package objects
 		private function CreateNormalBallon():void
 		{
 			
-			if (Math.random() > 0.5) colour = "Black";
-			switch (Math.floor(Math.random() * (6 )) + 1)
-			{
-				case 1: colour = "Red"; break;
-				
-				case 2: colour = "Blue"; break;
-				
-				case 3: colour = "DarkBlue"; break;
-				
-				case 4: colour = "Pink"; break;
-				
-				case 5: colour = "Violet"; break;
-				
-				case 6: colour = "Green"; break;
+			if (isUpgrade) colour = "Golden";
+			else {
+				switch (Math.floor(Math.random() * (7 )) + 1)
+				{
+					case 1: colour = "Red"; break;
+					
+					case 2: colour = "Blue"; break;
+					
+					case 3: colour = "DarkBlue"; break;
+					
+					case 4: colour = "Pink"; break;
+					
+					case 5: colour = "Violet"; break;
+					
+					case 6: colour = "Green"; break;
+					
+					case 7: colour = "Black"; break;
+				}
 			}
+			
 			NormalBallon = new Animation(Assets.getAtlas());
 			NormalBallon.addAnimation(colour + "_Balloon01", 1, false);
 			NormalBallon.addAnimation(colour + "_Balloon", 18, false);
@@ -81,24 +86,27 @@ package objects
 			NormalBallon.width = dimension;
 			NormalBallon.height = dimension;
 			this.addChild(NormalBallon);
+			NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
+			NormalBallonObject.physicsProperties.contactGroup = "balloon";
+			//NormalBallonObject.name = "balloon" + ind;
 			
-			if (colour != "Black"  || isUpgrade)
-			{
-				//NormalBallon = new Image(Assets.getTexture("Red_Balloon"));
-				NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
+			if (colour != "Black")
+			{				
+				//NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } ));
 				NormalBallonObject.name = "balloon" + ind;
-				NormalBallonObject.physicsProperties.contactGroup = "balloon";
+				//NormalBallonObject.physicsProperties.contactGroup = "balloon";
 
 			}
 			else 
 			{
-				//NormalBallon = new Image(Assets.getTexture("Black_Balloon"));
-				NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100, contactGroup:"enemy" } ));
+				//NormalBallonObject = physics.injectPhysics(NormalBallon, PhysInjector.CIRCLE, new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100, contactGroup:"balloon" } ));
+				//NormalBallonObject.id = "Black";
 				//NormalBallonObject.physicsProperties.contactGroup = "enemy";
 				//NormalBallonObject.name = "enemy";
-				//NormalBallonObject.name = "balloon" + ind;
-
+				NormalBallonObject.name = "Black" + ind;
 			}		
+			
+			this.name = NormalBallonObject.name;
 			
 			NormalBallonObject.body.SetFixedRotation(true);
 			if (Math.random() >= 0.5) RIGHT = true;
@@ -140,20 +148,23 @@ package objects
 			
 			if (NormalBallonObject.x > 800 || NormalBallonObject.x < -100) 
 			{
-				NormalBallonObject.physicsProperties.active = false;
-				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-				this.parent.removeChild(this);
+				EraseBalloon();
 			}
 			
 			else 
 			{
 				if (NormalBallonObject.y > char.GetPosY() + 600 || NormalBallonObject.y < char.GetPosY() - 900) 
 				{
-					NormalBallonObject.physicsProperties.active = false;
-					this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-					this.parent.removeChild(this);
+					EraseBalloon();
 				}
 			}
+		}
+		
+		public function EraseBalloon():void
+		{
+			NormalBallonObject.physicsProperties.active = false;
+			removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
+			parent.removeChild(this);
 		}
 		
 		private function ObtainPosY():Number
@@ -182,43 +193,5 @@ package objects
 				NormalBallon.play(colour + "_BalloonReverse");
 			}
 		}
-		//
-			
-		
-			
-		/*private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2contact):void
-		{
-			if (ObjectA.y + 64 <= ObjectB.y + 16)
-			{
-				//trace("entra");
-				ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
-				if (!char.GetOnFloorValue() && char.GetJumpValue())
-				{
-					currentDate = new Date(); //fecha de cuando choca
-					lastMS = char.GetLastDate().getTime(); //tiempo de cuando apreto boton JUMP
-					newMS = currentDate.getTime(); // tiempo de choque
-					
-					if (newMS - lastMS <= 100) 
-					{
-						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
-						char.animate("JumpContact");
-						char.Impulsed();
-					}
-					
-					else
-					{
-						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
-						char.animate("JumpContact");
-					}
-					
-				}
-				else
-				{
-					ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
-					char.animate("JumpContact");
-				}	
-				//balloon.animateBalloon();
-			}
-		}*/
 	}
 }

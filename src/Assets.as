@@ -3,9 +3,12 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.utils.Dictionary;
+	import starling.text.BitmapFont;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.text.TextField;
 	import screens.Animation
+	
 	/**
 	 * ...
 	 * @author Yo 
@@ -58,6 +61,25 @@ package
 		
 		[Embed(source = "../assets/graphics/welcome_aboutButton.png")]
 		public static const WelcomeAboutBtn:Class;*/
+		
+		[Embed(source = "../assets/font/font.png")]
+		public static const FontTexture:Class;
+		
+		[Embed(source = "../assets/font/font.fnt", mimeType="application/octet-stream")]
+		public static const FontXml:Class;
+		public static var myFont:BitmapFont;
+  
+		public static function getFont():BitmapFont
+		{
+			var fontTexture:Texture = Texture.fromBitmap(new FontTexture());
+			var fontXML:XML = XML(new FontXml());
+   
+			var font:BitmapFont = new BitmapFont(fontTexture, fontXML);
+			TextField.registerBitmapFont(font);
+   
+			return font;
+		}
+		
 		
 		private static var gameTextures:Dictionary = new Dictionary();
 		
