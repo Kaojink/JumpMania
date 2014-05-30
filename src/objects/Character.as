@@ -44,11 +44,12 @@ package objects
 		private var lastMS:Number=0;
 		private var newMS:Number = 101;
 		private var OnFloor:Boolean = true;
+		private var SkillNameEnabled:String = "";
 		private var SkillActived:Boolean = false;
 		private var Lives:Number = 5; 
 		private var count_jump:Number = 0;
 		private var CharHit:Boolean = false;
-		private var timer:Timer;
+		private var timer:Timer = new Timer(0);
 		
 		
 		public function Character(fisicas:PhysInjector) 
@@ -83,7 +84,7 @@ package objects
 			
 			//charobject = physics.injectPhysics(character, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
 			
-			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0,linearDamping:1 } ));
+			charobject = physics.injectPhysics(character_animation, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.2, restitution: 0, linearDamping:1 } ));
 			charobject.y = 585.4750000000001;
 			charobject.x = Starling.current.nativeStage.stageWidth / 2;
 			charobject.physicsProperties.contactGroup = "char";
@@ -98,18 +99,35 @@ package objects
 			ContactManager.onContactBegin("char", "floor", OnTheFloor);
 			ContactManager.onContactEnd("char", "floor", OverTheFloor);
 			
+			addEventListener(Event.CHANGE, pausegame);
+		}
+		
+		private function pausegame(e:Event):void 
+		{
 			
-			//ContactManager.onContactBegin("char", "plane", TouchPlane);
-			
-			//ContactManager.onContactBegin("char", "enemy", HitEnemy);
-
-
 		}
 		
 		private function TouchEnemy(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			trace("hola");
-			//trace(ObjectB.name);			
+			trace(ObjectA.name);
+			if (!CharHit)// && Lives>=1)
+			{
+				trace("pegado");
+				TakeLife();
+				trace(ObjectB.displayObject);
+				physics.removePhysics(ObjectB.displayObject, true);
+				
+				if (Lives > 0)
+				{
+					CharHit = true;
+					this.alpha = 0.6;
+					//character_animation.alpha = 0.6;
+					timer = new Timer(1500);
+					timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
+					timer.start();
+					
+				}
+			}
 		}
 			
 		private function Movement(event:KeyboardEvent):void
@@ -130,8 +148,11 @@ package objects
 				}
 				break;
 			  case 90:
-				if(!SkillActived) SkillActived = true;
-				break;
+				if (SkillNameEnabled != "" && !SkillActived)
+				{
+					SkillActived = true;
+				}
+			  break;
 			}
 		}
 		
@@ -139,6 +160,7 @@ package objects
 		
 		private function Stop(event:KeyboardEvent):void 
 		{
+			//trace(event.keyCode);
 			switch (event.keyCode)
 			{
 			  case 39: //derecha
@@ -153,52 +175,60 @@ package objects
 				break;
 			  case 90: //barra
 				SkillActived = false;
-				break;
+			  break;
 			}
 		}
 		
 		private function updateMovement():void
 		{
-			character_animation.y = charobject.y;
-			
-			if (charobject.x < 0) charobject.x = Starling.current.nativeStage.stageWidth;
-			else if (charobject.x > Starling.current.nativeStage.stageWidth) charobject.x=0;
-
-			if (LEFT)
+			if ((parent.parent as InGame).isPauseActivated())
 			{
-				character_animation.scaleX = -1;
-				if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());
-				else (charobject.body.SetLinearVelocity(new b2Vec2(-vMaxX, charobject.body.GetLinearVelocity().y)));
-			}
-			if (RIGHT) 
-			{
-				character_animation.scaleX = 1;
-				if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
-				else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
-			}
-
-			if (OnFloor && JUMP)
-			{
-				animate("JumpContact");	
+				trace("pausa activado");
+				character_animation.stop();
+				removeEventListener(KeyboardEvent.KEY_DOWN, Movement);
+				removeEventListener(KeyboardEvent.KEY_UP, Stop);
+				timer.stop();
+				//removeEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);	
 				
-				OnFloor = false;
-				charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
 			}
-			if (charobject.body.GetLinearVelocity().y > 0 && charobject.y < 200) 
+			else 
 			{
-				animate("JumpAir");
+				character_animation.y = charobject.y;
+				
+				if (charobject.x < 0) charobject.x = Starling.current.nativeStage.stageWidth;
+				else if (charobject.x > Starling.current.nativeStage.stageWidth) charobject.x=0;
+
+				if (LEFT)
+				{
+					character_animation.scaleX = -1;
+					if (charobject.body.GetLinearVelocity().x > -5.4) charobject.body.ApplyForce(new b2Vec2( -18, 0), charobject.body.GetLocalCenter());
+					else (charobject.body.SetLinearVelocity(new b2Vec2(-vMaxX, charobject.body.GetLinearVelocity().y)));
+				}
+				if (RIGHT) 
+				{
+					character_animation.scaleX = 1;
+					if (charobject.body.GetLinearVelocity().x < 5.4) charobject.body.ApplyForce(new b2Vec2( 18, 0), charobject.body.GetLocalCenter());
+					else (charobject.body.SetLinearVelocity(new b2Vec2(vMaxX, charobject.body.GetLinearVelocity().y)));
+				}
+
+				if (OnFloor && JUMP)
+				{
+					animate("JumpContact");	
+					
+					OnFloor = false;
+					charobject.body.ApplyImpulse(new b2Vec2( 0, -20), charobject.body.GetLocalCenter()); //impulso normal	
+				}
+				if (charobject.body.GetLinearVelocity().y > 0 && charobject.y < 200) 
+				{
+					animate("JumpAir");
+				}
+				if (SkillActived)
+				{
+					SkillActived = false; 
+					UseSkill(SkillNameEnabled);
+				}
 			}
-			if (SkillActived)
-			{
-				SkillActived = false;
-				UseSkill();
-			}
-		}
-		
-		
-		private function TouchPlane(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
-		{
-			trace(ObjectB.name);
+			
 		}
 		
 		private function OnTheFloor(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
@@ -229,8 +259,21 @@ package objects
 		
 		public function animate(nombre:String):void
 		{
-			if (nombre == "JumpLanding" && character_animation.AnimationCompleted("JumpAir")) character_animation.play(nombre);
-			else character_animation.play(nombre);
+			if (nombre == "ActivateAnimation" && !(parent.parent as InGame).isPauseActivated())
+			{
+				character_animation.resume();
+				addEventListener(KeyboardEvent.KEY_DOWN, Movement);
+				addEventListener(KeyboardEvent.KEY_UP, Stop);
+				timer.start();
+				//addEventListener(EnterFrameEvent.ENTER_FRAME, updateMovement);
+				
+			}
+			else
+			{
+				if (nombre == "JumpLanding" && character_animation.AnimationCompleted("JumpAir")) character_animation.play(nombre);
+				else character_animation.play(nombre);
+			}
+			
 		}
 		
 		public function GetVelY():Number
@@ -240,23 +283,72 @@ package objects
 		
 		public function EnableContact():void
 		{
-			//ContactManager.onContactBegin("char", "enemy", TouchEnemy, true);
+			ContactManager.onContactBegin("char", "enemy", TouchEnemy, true);
 			ContactManager.onContactBegin("char", "balloon", Rebound, true);		
 		}
 		public function RestartPos():void
 		{
+			character_animation.visible = false;
 			charobject.body.SetLinearVelocity(new b2Vec2(0, 0));
-			charobject.x = Starling.current.nativeStage.stageWidth/2;
+			charobject.x = Starling.current.nativeStage.stageWidth / 2;
 			charobject.y = GetInitPosY();
 			animate("Idleanimation128_");
+			character_animation.visible = true;
+			Lives = 5;
+			(parent.parent as InGame).UpdateLives();
 		}
 		
-		private function UseSkill():void
+		public function SetSkill(name:String):void
 		{
-			var index:Number = (parent.parent as InGame).getindex();
-			var balloon:Balloon = new Balloon(physics, index, this, true);
-			//balloon.name = "balloon" + index;
-			(parent.parent as InGame).getLayer().addChild(balloon);
+			SkillNameEnabled = name;
+		}
+		
+		private function UseSkill(IdSkill:String):void
+		{
+			switch (IdSkill) 
+			{
+				case "Extra Balloon":
+					var index:Number = (parent.parent as InGame).getindex();
+					var balloon:Balloon = new Balloon(physics, index, this, true);
+					//balloon.name = "balloon" + index;
+					(parent.parent as InGame).getLayer("Balloons").addChild(balloon);
+					SkillNameEnabled = "";
+					break;
+				case "Cape":
+					if (!timer.running)
+					{
+						CharHit = true;
+						this.alpha = 0.6;
+						//character_animation.alpha = 0.6;
+						timer = new Timer(10000);
+						timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
+						timer.start();
+						SkillNameEnabled = "";
+					}
+					break;
+				case "Bomb Drawing":
+					{
+						trace("bomba usada");
+						//(parent.parent as InGame).getLayer("Enemies").removeEventListeners();
+						//((parent.parent as InGame).getLayer("Enemies").getChildByName("foes") as Enemies).removeEventListeners();
+						((parent.parent as InGame).getLayer("Enemies").getChildByName("foes") as Enemies).eraseenemies();
+					}
+					break;
+					
+			}
+			
+			
+			
+		}
+		
+		private function ActiveInvincibility(event:TimerEvent):void
+		{
+		//	trace("hola");
+			CharHit = false;
+			this.alpha = 1;
+			//character_animation.alpha = 1;
+			timer.reset();
+			timer.removeEventListener(TimerEvent.TIMER, ActiveInvincibility);
 		}
 		
 		public function GetLives():Number
@@ -270,31 +362,38 @@ package objects
 			(parent.parent as InGame).UpdateLives();
 		}
 		
-		private function ActiveInvincibility(event:TimerEvent):void
-		{
-			trace("hola");
-			CharHit = false;
-	//		timer.reset();
-		//	timer.removeEventListener(TimerEvent.TIMER, ActiveInvincibility);
-		}
+		
 		
 		private function Rebound(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
+			//var ch:Balloon = ObjectB.displayObject as Balloon; permite acceder a las funciones publicas del objeto directamente
 			if (ObjectA.y + 64 <= ObjectB.y + 16)
 			{
-				if (ObjectB.name.substr(0,5) == "Black" && !CharHit)
+				if (ObjectB.name.substr(0, 5) == "Black")
 				{
-					trace(ObjectB.name);
-					ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
-					TakeLife();					
-					//CharHit = true;
-					//timer = new Timer(2250);
-					//timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
-					//timer.start();
-					//(parent.parent as InGame).animateOrEraseCorrectBalloon(ObjectB.name, "Erase");
+					
+					if (!CharHit && Lives>=1)
+					{						
+						TakeLife();
+						if (Lives > 0)
+						{
+							ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
+							CharHit = true;
+							this.alpha = 0.6;
+							//character_animation.alpha = 0.6;
+							timer = new Timer(1500);
+							timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
+							timer.start();
+							(parent.parent as InGame).DoToCorrectBalloon(ObjectB.name, "Erase");
+						}
+						
+						
+					}			
 				}
+				
 				else 
 				{
+					
 					ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
 					if (!OnFloor && JUMP)
 					{
@@ -305,7 +404,7 @@ package objects
 						
 						if (newMS - lastMS <= 100) 
 						{
-							ObjectA.body.ApplyImpulse(new b2Vec2( 0, -20), ObjectA.body.GetLocalCenter()); //impulso extra
+							ObjectA.body.ApplyImpulse(new b2Vec2( 0, -21), ObjectA.body.GetLocalCenter()); //impulso extra
 							animate("JumpContact");
 							JUMP = false;
 							count_jump++;
@@ -330,7 +429,8 @@ package objects
 						ObjectA.body.ApplyImpulse(new b2Vec2( 0, -15), ObjectA.body.GetLocalCenter()); //impulso normal
 						animate("JumpContact");
 					}	
-					(parent.parent as InGame).animateOrEraseCorrectBalloon(ObjectB.name, "Erase");
+					(parent.parent as InGame).DoToCorrectBalloon(ObjectB.name, "Animate");
+					(parent.parent as InGame).DoToCorrectBalloon(ObjectB.name, "TakeBalloonLife");
 				}
 				
 			}

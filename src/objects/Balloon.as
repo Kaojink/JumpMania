@@ -1,6 +1,7 @@
 package objects 
 {
 	import Box2D.Common.Math.b2Vec2;
+	import screens.InGame;
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -27,7 +28,7 @@ package objects
 		private var physics:PhysInjector;
 		private var Xdirection:Number=0;
 		private var properties:PhysicsProperties = new PhysicsProperties( { isDynamic:true, friction:0, linearDamping:100 } );
-		private var BalloonLives:Number = 5;
+		private var BalloonLives:Number = 3;
 		private var isUpgrade:Boolean = false;
 		private var char:Character;
 		private var colour:String;
@@ -103,7 +104,7 @@ package objects
 				//NormalBallonObject.id = "Black";
 				//NormalBallonObject.physicsProperties.contactGroup = "enemy";
 				//NormalBallonObject.name = "enemy";
-				NormalBallonObject.name = "Black" + ind;
+				NormalBallonObject.name = "Black" + ind;		
 			}		
 			
 			this.name = NormalBallonObject.name;
@@ -144,29 +145,34 @@ package objects
 		{
 			var currentDate:Date = new Date();
 			NormalBallonObject.y = Starling.current.root.y + PosY + (Math.cos(currentDate.getTime() * 0.002) * 15);
-			NormalBallonObject.x += Xdirection;
 			
-			if (NormalBallonObject.x > 800 || NormalBallonObject.x < -100) 
+			if (!(parent.parent as InGame).isPauseActivated())
 			{
-				EraseBalloon();
-			}
-			
-			else 
-			{
-				if (NormalBallonObject.y > char.GetPosY() + 600 || NormalBallonObject.y < char.GetPosY() - 900) 
+				NormalBallonObject.x += Xdirection;
+				
+				if (NormalBallonObject.x > 800 || NormalBallonObject.x < -100) 
 				{
 					EraseBalloon();
+				}
+				
+				else 
+				{
+					if (NormalBallonObject.y > char.GetPosY() + 600 || NormalBallonObject.y < char.GetPosY() - 900) 
+					{
+						EraseBalloon();
+					}
 				}
 			}
 		}
 		
 		public function EraseBalloon():void
 		{
-			NormalBallonObject.physicsProperties.active = false;
-			removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-			parent.removeChild(this);
+			(parent.parent as InGame).DecreaseNBalloons();
+			physics.removePhysics(NormalBallon, true); 
+			this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
+			this.parent.removeChild(this); //si hace falta		
 		}
-		
+
 		private function ObtainPosY():Number
 		{
 			var random:Number = Math.random();
@@ -191,6 +197,15 @@ package objects
 			{
 				removeEventListener(EnterFrameEvent.ENTER_FRAME, ReturnNormalFrame);
 				NormalBallon.play(colour + "_BalloonReverse");
+			}
+		}
+		
+		public function TakeBalloonLife():void
+		{
+			BalloonLives--;
+			if (BalloonLives == 0)
+			{
+				EraseBalloon();
 			}
 		}
 	}

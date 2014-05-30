@@ -49,35 +49,29 @@ package screens
 
 		private var char:Character;
 		
-	//	private var floor:Image;
-	//	private var floorObject:PhysicsObject;
-		
-		private var generate:Boolean=true;
-		private var time:Date = new Date;
-		private var time2:Date = new Date;
-		
 		private var gravity:b2Vec2 = new b2Vec2(0, 9.8); //normal earth gravity, 9.8 m/s/s straight down!
 		
 		private var index:Number = 0;
-		private var landing:Boolean= false;
 		
 		private var Score:Number = 0;
 		private var LastHigherPos:Number;
 		private var LastThisY:Number;
 
 		private var ScoreText:TextField = new TextField(200, 100, "", Assets.getFont().name, 24,0xEAFF5E);
-		private var LifeText:TextField = new TextField(100, 50, "",Assets.getFont().name, 20,0xEAFF5E);
+		private var LifeText:TextField = new TextField(50, 50, "",Assets.getFont().name, 20,0xEAFF5E);
 		private var LifeIcon:Image;
-		
+		private var NBalloons:Number = 0;
 		private var BackObjects:Background;
 		
 		private var Foes:Enemies;
 		
 		private var timer:Timer;
 		
-		private var layerBallons:Sprite;
-		private var layerEnemies:Sprite;
-		private var layerChar:Sprite;
+		private var LayerBalloons:Sprite;
+		private var LayerEnemies:Sprite;
+		private var LayerChar:Sprite;
+		
+		private var Pause:Boolean = false;
 		
 		public function InGame() 
 		{
@@ -93,9 +87,9 @@ package screens
 			
 			trace("InGame Screen");
 			
-			layerBallons = new Sprite();
-			layerEnemies = new Sprite();
-			layerChar = new Sprite();
+			LayerBalloons = new Sprite();
+			LayerEnemies = new Sprite();
+			LayerChar = new Sprite();
 				
 			char = new Character(physics);		
 			
@@ -105,35 +99,40 @@ package screens
 			BackObjects = new Background(physics);
 			addChild(BackObjects);
 			
-			addChild(layerBallons);
-			addChild(layerEnemies);
-			addChild(layerChar);
+			addChild(LayerBalloons);
+			addChild(LayerEnemies);
+			addChild(LayerChar);
 			
-			ScoreText.text = "Score: "+Score;
+			ScoreText.text = "Score: " + Score;
+			ScoreText.hAlign = "left";
+			ScoreText.x = 25;
 			addChild(ScoreText);
 			
 			LifeText.text = "X  " + char.GetLives() ;
-			LifeText.x = Starling.current.nativeStage.stageWidth - LifeText.width;
+			LifeText.hAlign = "left";
+			LifeText.x = Starling.current.nativeStage.stageWidth - LifeText.width/0.75;
 			addChild(LifeText);
 			
 			LifeIcon = new Image(Assets.getAtlas().getTexture("character_life"));
 			LifeIcon.scaleX = 0.75;
 			LifeIcon.scaleY = 0.75;
-			LifeIcon.x= Starling.current.nativeStage.stageWidth - LifeText.width-LifeIcon.width/2;
+			LifeIcon.x= Starling.current.nativeStage.stageWidth - LifeText.width-LifeIcon.width*1.5;
 			this.addChild(LifeIcon);
 		
-			layerChar.addChild(char);	
+			LayerChar.addChild(char);	
 			
 			char.y = char.GetPosY();
 			LastHigherPos = char.y;
 			
 			Foes = new Enemies(physics, char);
-			layerEnemies.addChild(Foes);
+			Foes.name = "foes";
+			LayerEnemies.addChild(Foes);
 			
 			char.EnableContact();
 			
 			addEventListener(Event.ENTER_FRAME, update);
 			addEventListener(Event.ENTER_FRAME, followChar);
+			addEventListener(KeyboardEvent.KEY_DOWN, PauseGame);
 			
 			timer = new Timer(500);
 			timer.addEventListener(TimerEvent.TIMER, RandomGenerate);
@@ -143,7 +142,7 @@ package screens
 		public function generateItem ():void
 		{
 			var upgrades:Items = new Items();
-			layerChar.addChild(upgrades);
+			LayerChar.addChild(upgrades);
 		}
 		
 		public function initialize():void
@@ -153,19 +152,24 @@ package screens
 		
 		private function update(e:EnterFrameEvent):void
 		{ 
-			physics.update();
+			if(!Pause)
+				physics.update();
 		}
 		
 		private function RandomGenerate(e:TimerEvent):void
 		{
-			var globo:Balloon = new Balloon(physics, index, char, false);			
-			layerBallons.addChild(globo);
-			index++;
+			if (NBalloons < 30 && !Pause)
+			{
+				var globo:Balloon = new Balloon(physics, index, char, false);			
+				LayerBalloons.addChild(globo);
+				NBalloons++;
+				index++;
+			}
 		}
 		
 		public function UpdateLives():void 
 		{
-			LifeText.text =  "X  " + char.GetLives() ;
+			LifeText.text =  "X  " + char.GetLives();
 		}
 		
 		private function followChar(e:EnterFrameEvent):void
@@ -176,8 +180,8 @@ package screens
 			physics.globalOffsetY = -char.y + char.GetInitPosY();
 			ScoreText.y = char.y - char.GetInitPosY();
 			LifeText.y = ScoreText.y;
-			
 			LifeIcon.y = LifeText.y;
+
 			//BG.y = char.y - char.GetInitPosY();
 			if (char.GetVelY() > 0 && char.y >= 400) char.animate("JumpLanding");
 			if (char.GetVelY() < 0 && char.y < LastHigherPos)
@@ -188,8 +192,10 @@ package screens
 				ScoreText.text = "Score: "+Score;
 			}
 
-			if (char.y >= LastHigherPos + 500 && LastThisY > 750) 
+			if ((char.y >= LastHigherPos + 500 && LastThisY > 750) || char.GetLives()<=0) 
 			{
+				char.alpha = 1;
+				Restart();
 				/*removeEventListener(Event.ENTER_FRAME, followChar);
 				removeEventListener(Event.ENTER_FRAME, RandomGenerate);
 				removeEventListener(Event.ENTER_FRAME, update);
@@ -197,12 +203,7 @@ package screens
 
 				parent.removeChild(this);*/
 				
-				physics.globalOffsetY = 0;
-				char.RestartPos();
-				this.y = 0;
-				char.y = char.GetInitPosY();
-				LastHigherPos = char.y;
-				LastThisY = char.y;
+				
 			}
 			
 		}
@@ -214,15 +215,19 @@ package screens
 			return index2;
 		}
 		
-		public function animateOrEraseCorrectBalloon(nombre:String, action:String):void
+		public function DoToCorrectBalloon(nombre:String, action:String):void
 		{
+			if (action == "TakeBalloonLife")
+			{
+				(LayerBalloons.getChildByName(nombre) as Balloon).TakeBalloonLife();
+			}
 			if (action == "Animate")	
 			{
-				(layerBallons.getChildByName(nombre) as Balloon).animateBalloon();
+				(LayerBalloons.getChildByName(nombre) as Balloon).animateBalloon();
 			}
 			if (action == "Erase") 
 			{
-				(layerBallons.getChildByName(nombre) as Balloon).EraseBalloon();
+				(LayerBalloons.getChildByName(nombre) as Balloon).EraseBalloon();
 			}
 		}
 		
@@ -231,10 +236,68 @@ package screens
 			return char;
 		}
 		
-		public function getLayer():Sprite
+		public function getLayer(LayerName:String):Sprite
 		{
-			return layerBallons;
+			switch (LayerName) 
+			{
+				case "Balloons":
+					return LayerBalloons;
+					break;
+				case "Char":
+					return LayerChar;
+					break;
+				case "Enemies":
+					return LayerEnemies;
+					break;
+			}
+			return null;
+			
 		}
+		
+		public function DecreaseNBalloons():void
+		{
+			NBalloons--;
+		}
+		
+		private function PauseGame(event:KeyboardEvent):void // control de la tecla pausa
+		{
+			switch (event.keyCode)
+			{
+			  case 80: //letra P
+				if (Pause)
+				{
+					Pause = false;
+					char.animate("ActivateAnimation");
+					//Starling.current.nativeStage.frameRate = 30;
+					
+				}
+				else 
+				{
+					Pause = true;
+					//Starling.current.nativeStage.frameRate = 0;
+				}
+				break;
+			}
+		}
+		
+		public function isPauseActivated():Boolean
+		{
+			return Pause;
+		}
+		
+		public function Restart():void
+		{
+			physics.globalOffsetY = 0;
+			char.RestartPos();
+			this.y = 0;
+			Score = 0;
+			ScoreText.text = "Score: "+Score;
+			char.y = char.GetInitPosY();
+			LastHigherPos = char.y;
+			LastThisY = char.y;
+		}
+		
+		
 
 	}
 

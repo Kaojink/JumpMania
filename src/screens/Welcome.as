@@ -29,19 +29,23 @@ package screens
 		{
 			trace("Welcome screen!");
 			
-			/*bg = new Image(Assets.getTexture("BackgroundWelcome"));
-			bg.width = 600;
+			bg = new Image(Assets.getTexture("Mountain"));
+			bg.width = 700;
 			bg.height = 800;
-			this.addChild(bg);*/
+			this.addChild(bg);
 			
-			/*title = new Image(Assets.getAtlas().getTexture("welcome_title"));
+			title = new Image(Assets.getTexture("Plane"));
 			title.x = bg.width-200-title.width/2;
 			title.y = 20;
+			title.height = 200;
+			title.width = 300;
 			this.addChild(title);
 			
-			playBtn = new Button(Assets.getAtlas().getTexture("welcome_playButton"));
+			playBtn = new Button(Assets.getTexture("Tree"));
+			playBtn.width = 200;
+			playBtn.height = 100;
 			playBtn.x = 450-playBtn.width/2;		
-			this.addChild(playBtn);*/
+			this.addChild(playBtn);
 			
 			
 			//la carga de imagenes se podria hacer asi o directamente

@@ -29,16 +29,16 @@ package
 			
 			this.addEventListener(NavigationEvent.CHANGE_SCREEN, onChangeScreen);
 			
-			//screenInGame = new InGame();
-			//screenInGame.disposeTemporarily();
-			//this.addChild(screenInGame); esto es para dejar en espera la pantalla ingame
+			//ScreenInGame = new InGame();
+			//ScreenInGame.visible = false;
+			//this.addChild(ScreenInGame); //esto es para dejar en espera la pantalla ingame*/
 			
-			//ScreenWelcome = new Welcome(); //esto es para pasar a la pantalla de welcome
-			//this.addChild(ScreenWelcome);
-			//ScreenWelcome.initialize();
+			ScreenWelcome = new Welcome(); //esto es para pasar a la pantalla de welcome
+			this.addChild(ScreenWelcome);
+			ScreenWelcome.initialize();
 			
 			//inicializo directamente ingame para ir directamente a la pantalla de juego, para hacerlo bien seria lo de abajo
-			StartGame();
+			//StartGame();
 		}
 		
 		private function onChangeScreen(event:NavigationEvent):void
@@ -46,19 +46,22 @@ package
 			switch (event.params.id)
 			{
 				case "play":
-					//ScreenWelcome.disposeTemporarily();  //asi seria para que cambiara de la pantalla de welcome a ingame
-					//screenInGame.initialize();
+					ScreenWelcome.visible = false;  //asi seria para que cambiara de la pantalla de welcome a ingame
+					ScreenInGame = new InGame();
+					ScreenInGame.initialize();
+					this.addChild(ScreenInGame);
+					swapChildren(ScreenWelcome, ScreenInGame);
 					break;
 			}
 			
 		}
 		
-		private function StartGame():void
+		/*private function StartGame():void
 		{
 			ScreenInGame = new InGame();
 			this.addChild(ScreenInGame);
 			ScreenInGame.initialize();
-		}
+		}*/
 		
 		
 		

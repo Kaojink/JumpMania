@@ -41,8 +41,7 @@ package
 		public static const Mountain:Class;
 		
 		[Embed(source = "../assets/personajes/Plane.png")]
-		public static const Plane:Class;
-		
+		public static const Plane:Class;		
 		
 		[Embed(source = "../assets/personajes/Red_Balloon.png")]
 		public static const Red_Balloon:Class;
@@ -98,7 +97,6 @@ package
 				var texture:Texture = getTexture("Atlas_textureGame");
 				var xml:XML = XML( new AtlasXmlGame());
 				gameTextureAtlas = new TextureAtlas(texture, xml);
-				
 			}
 			return gameTextureAtlas;
 		}
@@ -106,7 +104,6 @@ package
 		{
 			if (gameTextures[name] == undefined)
 			{
-				
 				var bitmap:Bitmap = new Assets[name]();
 				gameTextures[name] = Texture.fromBitmap(bitmap); //esto la convierte en una textura y se guarda en el diccionario
 			}
