@@ -50,12 +50,30 @@ package objects
 			KiteObject.physicsProperties.contactGroup = "enemy";
 			KiteObject.name = "Kite";
 			KiteObject.physicsProperties.isSensor = true;
-			character.EnableContact();
-			GenerateKite();
+			//GenerateKite();
+			//esto es lo mismo que hay en generate kite
+			var RIGHT:Boolean = true; //RIGHT es que viene de la derecha
+			KiteObject.y = character.GetPosY() - 200 -  Math.random() * 300 ;
+			PosY = KiteObject.y;
+			if (Math.random() >= 0.5) RIGHT = false;
+			
+			if (RIGHT)
+			{
+				KiteImage.scaleX = -0.3;
+				KiteObject.x = Starling.current.nativeStage.stageWidth + KiteImage.width/2;
+				Xdirection = -3 - Math.random() * 2;
+			}
+			else
+			{
+				KiteImage.scaleX = 0.3;
+				KiteObject.x = -KiteImage.width/2;
+				Xdirection = 3 + Math.random() * 2;
+			}
+			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
 			
 		}
 		
-		private function GenerateKite():void
+		/*private function GenerateKite():void
 		{
 			var RIGHT:Boolean = true; //RIGHT es que viene de la derecha
 			KiteObject.y = character.GetPosY() - 200 -  Math.random() * 300 ;
@@ -75,12 +93,13 @@ package objects
 				Xdirection = 3 + Math.random() * 2;
 			}
 			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-		}
+		}*/
 		
 		
 		private function FlyState(e:EnterFrameEvent):void
 		{
-			if (KiteObject != null && KiteObject.displayObject!=null)
+			//if (KiteObject != null && KiteObject.displayObject!=null)
+			if (KiteObject.displayObject!=null)
 			{
 				var currentDate:Date = new Date();
 				KiteObject.y = Starling.current.root.y + PosY + (Math.cos(currentDate.getTime() * 0.001) * 100);
@@ -97,15 +116,17 @@ package objects
 					if (KiteObject.x > 1000 || KiteObject.x < -200) 
 					{
 						this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-						KiteObject.y = Math.random() * 400 + character.GetPosY();
-						GenerateKite();
+						physics.removePhysics(KiteImage, true);
+						//KiteObject.y = Math.random() * 400 + character.GetPosY();
+						//GenerateKite();
 					}
 					
 					if (KiteObject.y > character.GetPosY()+500 || KiteObject.y < character.GetPosY()-900) 
 					{
 						this.removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-						KiteObject.x = 100;
-						GenerateKite();
+						physics.removePhysics(KiteImage, true);
+						//KiteObject.x = 100;
+						//GenerateKite();
 					}
 				}
 				else
@@ -118,8 +139,14 @@ package objects
 			else
 			{
 				removeEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
-				CreateKite();
+				//CreateKite();
 			}
+		}
+		
+		public function ErasePhysics():void
+		{
+			physics.removePhysics(KiteImage, true);
+			
 		}
 	}
 }

@@ -52,15 +52,43 @@ package objects
 			PlaneObject.physicsProperties.contactGroup = "enemy";
 			PlaneObject.name = "plane";
 			PlaneObject.physicsProperties.isSensor = true;
-			//character.EnableContact();
 			//addChild(BoxImage1);
 			//addChild(BoxImage2);
 			//addChild(BoxImage3);
-			GeneratePlane();
+			//GeneratePlane();
+			
+			
+			//esto es lo mismo que lo que hay en generate plane
+			
+			//RIGHT es que viene de la derecha
+			Box1Activated = false;
+			Box2Activated = false;
+			Box3Activated = false;
+			
+			PlanePosY = character.GetPosY() - 450 -  Math.random() * 100 ;
+			var RIGHT:Boolean = true; 
+			if (Math.random() >= 0.5) RIGHT = false;
+			
+			if (RIGHT)
+			{
+				PlaneImage.scaleX = 1;
+				PlaneObject.x = Starling.current.nativeStage.stageWidth + PlaneImage.width/2;
+				Xdirection = -7 - Math.random() * 4;
+			}
+			else
+			{
+				PlaneImage.scaleX = -1;
+				PlaneObject.x = -PlaneImage.width/2;
+				Xdirection = 7 + Math.random() * 4;
+			}
+			//PlaneObject.body.SetLinearVelocity(new b2Vec2(Xdirection, 0));
+			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
+			addEventListener(EnterFrameEvent.ENTER_FRAME, BoxFall);
+			//PlaneObject.physicsProperties.density = 2;
 			
 		}
 		
-		private function GeneratePlane():void
+	/*	private function GeneratePlane():void
 		{
 			//RIGHT es que viene de la derecha
 			Box1Activated = false;
@@ -87,15 +115,14 @@ package objects
 			addEventListener(EnterFrameEvent.ENTER_FRAME, FlyState);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, BoxFall);
 			//PlaneObject.physicsProperties.density = 2;
-		}
+		}*/
 		
-
-		
-		
+	
 		private function FlyState(e:EnterFrameEvent):void
 		{
 			//trace(character.GetPosY());
-			if (PlaneObject != null && PlaneObject.displayObject != null)
+			//if (PlaneObject != null && PlaneObject.displayObject != null)
+			if (PlaneObject.displayObject != null)
 			{
 				PlaneObject.y = PlanePosY;
 				PlaneObject.x += Xdirection;
@@ -106,10 +133,10 @@ package objects
 					
 						if (PlaneObject.x < (515 + ((Math.random() - 0.5) * 230)))
 						{
-							if (BoxObject1 != null && BoxObject1.displayObject !=null) 
+							/*if (BoxObject1 != null && BoxObject1.displayObject !=null) 
 							{
 								physics.removePhysics(BoxImage1, true);
-							}
+							}*/
 							Box1Activated = true;
 							BoxImage1 = new Image(Assets.getAtlas().getTexture("box_plane"));
 							BoxImage1.y = 1000;
@@ -127,10 +154,10 @@ package objects
 					{
 						if (PlaneObject.x < (320 + ((Math.random() - 0.5) * 230)))
 						{
-							if (BoxObject2 != null && BoxObject2.displayObject !=null) 
+							/*if (BoxObject2 != null && BoxObject2.displayObject !=null) 
 							{
 								physics.removePhysics(BoxImage2, true);
-							}
+							}*/
 							Box2Activated = true;
 							BoxImage2 = new Image(Assets.getAtlas().getTexture("box_plane"));
 							BoxImage2.y = 1000;
@@ -148,10 +175,10 @@ package objects
 					{
 						if (PlaneObject.x < (115 + ((Math.random() - 0.5) * 230)))
 						{
-							if (BoxObject3 != null && BoxObject3.displayObject !=null) 
+							/*if (BoxObject3 != null && BoxObject3.displayObject !=null) 
 							{
 								physics.removePhysics(BoxImage3, true);
-							}
+							}*/
 							Box3Activated = true;
 							BoxImage3 = new Image(Assets.getAtlas().getTexture("box_plane"));
 							BoxImage3.y = 1000;
@@ -172,10 +199,10 @@ package objects
 					{
 						if (PlaneObject.x > ((175 + ((Math.random() - 0.5) * 230))))
 						{
-							if (BoxObject1 != null && BoxObject1.displayObject !=null) 
+							/*if (BoxObject1 != null && BoxObject1.displayObject !=null) 
 							{
 								physics.removePhysics(BoxImage1, true);
-							}
+							}*/
 							Box1Activated = true;
 							BoxImage1 = new Image(Assets.getAtlas().getTexture("box_plane"));
 							BoxImage1.y = 1000;
@@ -195,10 +222,10 @@ package objects
 						{
 							if (PlaneObject.x > ((410 + ((Math.random() - 0.5) * 230))))
 							{
-								if (BoxObject2 != null && BoxObject2.displayObject !=null) 
+								/*if (BoxObject2 != null && BoxObject2.displayObject !=null) 
 								{
 									physics.removePhysics(BoxImage2, true);
-								}
+								}*/
 								Box2Activated = true;
 								BoxImage2 = new Image(Assets.getAtlas().getTexture("box_plane"));
 								BoxImage2.y = 1000;
@@ -217,10 +244,10 @@ package objects
 							{
 								if (PlaneObject.x > (635 + ((Math.random() - 0.5) * 230)))
 								{
-									if (BoxObject3 != null && BoxObject3.displayObject !=null) 
+									/*if (BoxObject3 != null && BoxObject3.displayObject !=null) 
 									{
 										physics.removePhysics(BoxImage3, true);
-									}
+									}*/
 									Box3Activated = true;
 									BoxImage3 = new Image(Assets.getAtlas().getTexture("box_plane"));
 									BoxImage3.y = 1000;
@@ -268,18 +295,21 @@ package objects
 		
 		private function BoxFall(e:EnterFrameEvent):void 
 		{
-			if (Box1Activated && BoxObject1.y > character.GetPosY() + 600)
-			{
-				physics.removePhysics(BoxImage1, true);
-				removeEventListener(EnterFrameEvent.ENTER_FRAME, BoxFall);
-			}
-			if (Box2Activated && BoxObject2.y > character.GetPosY() + 600)
-			{
-				physics.removePhysics(BoxImage2, true);
-			}
 			if (Box3Activated && BoxObject3.y > character.GetPosY() + 600)
 			{
-				physics.removePhysics(BoxImage3, true);
+				if (BoxObject1.displayObject != null)
+				{
+					physics.removePhysics(BoxImage1, true);
+				}
+				if (BoxObject2.displayObject != null)
+				{
+					physics.removePhysics(BoxImage2, true);
+				}
+				if (BoxObject3.displayObject != null)
+				{
+					physics.removePhysics(BoxImage3, true);
+				}
+				
 				removeEventListener(EnterFrameEvent.ENTER_FRAME, BoxFall);
 			}
 		}
@@ -287,21 +317,25 @@ package objects
 		
 		public function ErasePhysics():void
 		{
-			if (PlaneObject != null && PlaneObject.displayObject != null)
+			//if (PlaneObject != null && PlaneObject.displayObject != null)
+			if (PlaneObject.displayObject != null)
 			{
 				physics.removePhysics(PlaneImage, true)
 			}
 			
-			if (BoxObject1 != null && BoxObject1.displayObject !=null) 
+			//if (BoxObject1 != null && BoxObject1.displayObject !=null) 
+			if (BoxObject1.displayObject !=null) 
 			{
 				physics.removePhysics(BoxImage1, true);
 			}
 			
-			if (BoxObject2 != null && BoxObject2.displayObject !=null) 
+			//if (BoxObject2 != null && BoxObject2.displayObject !=null) 
+			if (BoxObject2.displayObject !=null) 
 			{
 				physics.removePhysics(BoxImage2, true);
 			}
-			if (BoxObject3 != null && BoxObject3.displayObject != null)
+			//if (BoxObject3 != null && BoxObject3.displayObject != null)
+			if (BoxObject3.displayObject != null)
 			{
 				physics.removePhysics(BoxImage3, true);
 			}

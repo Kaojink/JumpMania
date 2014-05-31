@@ -15,6 +15,7 @@ package objects
 	{
 		private var plane:Plane;
 		private var kite:Kite;
+		private var meteorite:Meteorite;
 		private var physics:PhysInjector;
 		private var character:Character;
 		
@@ -33,6 +34,9 @@ package objects
 			
 			kite = new Kite(physics, character);
 			this.addChild(kite);
+			
+			meteorite = new Meteorite(physics, character);
+			this.addChild(meteorite);
 		}
 		
 		public function eraseenemies():void

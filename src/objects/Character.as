@@ -109,7 +109,7 @@ package objects
 		
 		private function TouchEnemy(ObjectA:PhysicsObject, ObjectB:PhysicsObject, contact:b2Contact):void
 		{
-			trace(ObjectA.name);
+			trace(ObjectB.name);
 			if (!CharHit)// && Lives>=1)
 			{
 				trace("pegado");
@@ -121,6 +121,7 @@ package objects
 				{
 					CharHit = true;
 					this.alpha = 0.6;
+					//charobject.physicsProperties.isSensor = true;
 					//character_animation.alpha = 0.6;
 					timer = new Timer(1500);
 					timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
@@ -310,7 +311,6 @@ package objects
 				case "Extra Balloon":
 					var index:Number = (parent.parent as InGame).getindex();
 					var balloon:Balloon = new Balloon(physics, index, this, true);
-					//balloon.name = "balloon" + index;
 					(parent.parent as InGame).getLayer("Balloons").addChild(balloon);
 					SkillNameEnabled = "";
 					break;
@@ -319,7 +319,7 @@ package objects
 					{
 						CharHit = true;
 						this.alpha = 0.6;
-						//character_animation.alpha = 0.6;
+						//charobject.physicsProperties.isSensor = true;
 						timer = new Timer(10000);
 						timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
 						timer.start();
@@ -329,9 +329,8 @@ package objects
 				case "Bomb Drawing":
 					{
 						trace("bomba usada");
-						//(parent.parent as InGame).getLayer("Enemies").removeEventListeners();
-						//((parent.parent as InGame).getLayer("Enemies").getChildByName("foes") as Enemies).removeEventListeners();
 						((parent.parent as InGame).getLayer("Enemies").getChildByName("foes") as Enemies).eraseenemies();
+						SkillNameEnabled = "";
 					}
 					break;
 					
@@ -346,7 +345,7 @@ package objects
 		//	trace("hola");
 			CharHit = false;
 			this.alpha = 1;
-			//character_animation.alpha = 1;
+			//charobject.physicsProperties.isSensor = true;
 			timer.reset();
 			timer.removeEventListener(TimerEvent.TIMER, ActiveInvincibility);
 		}
@@ -380,7 +379,7 @@ package objects
 							ObjectA.body.SetLinearVelocity(new b2Vec2(ObjectA.body.GetLinearVelocity().x, 0));
 							CharHit = true;
 							this.alpha = 0.6;
-							//character_animation.alpha = 0.6;
+							//charobject.physicsProperties.isSensor = true;
 							timer = new Timer(1500);
 							timer.addEventListener(TimerEvent.TIMER, ActiveInvincibility)
 							timer.start();

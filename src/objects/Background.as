@@ -19,6 +19,7 @@ package objects
 	public class Background extends Sprite
 	{
 		private var Tree:Image;
+		private var Mountain:Image;
 		private var physics:PhysInjector;
 		private var floor:Image;
 		private var floorObject:PhysicsObject;
@@ -40,8 +41,13 @@ package objects
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.8, restitution:0 } ));
 			floorObject.name = "floor";
 			
+			Mountain = new Image(Assets.getTexture("Mountain"));
+			Mountain.y = Starling.current.nativeStage.stageHeight- 149 - Mountain.height;
+			Mountain.x = -20;
+			this.addChild(Mountain);
+			
 			Tree = new Image(Assets.getTexture("Tree"));
-			Tree.y = 150;
+			Tree.y = Starling.current.nativeStage.stageHeight- 149 - Tree.height;
 			Tree.x = -20;
 			this.addChild(Tree);
 		}
